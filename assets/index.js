@@ -1,0 +1,1 @@
+export const logo = "./teriler.png";
