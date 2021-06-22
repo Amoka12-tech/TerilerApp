@@ -20,14 +20,13 @@ export const getAllPost = () => async (dispatch) => {
 };
 
 export const createPost = (body, navigation, configProgress, setIsProgress) => async (dispatch) => {
-    dispatch({type: START_PROCESS});
+    
     setIsProgress(true);
     try {
         const { data } = await api.createPost(body, configProgress);
-        console.log('Post Data: ',data.payload.createdPost);
+        // console.log('Post Data: ',data.payload.createdPost);
         dispatch({type: CREATE_POST, payload: data.payload.createdPost});
         dispatch({type: REMOVE_ALL_MEDIA});
-        dispatch({type: END_PROCESS});
         setIsProgress(false);
         navigation.navigate('Main');
     } catch (error) {
@@ -35,10 +34,8 @@ export const createPost = (body, navigation, configProgress, setIsProgress) => a
             console.log(error.response.data);
         }
         console.log('Error',error.response.data.payload);
-        dispatch({type: END_PROCESS});
         setIsProgress(false);
     } finally{
-        dispatch({type: END_PROCESS});
         setIsProgress(false);
     }
 } 

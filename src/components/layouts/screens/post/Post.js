@@ -12,6 +12,7 @@ import Axios from 'axios';
 import { Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function PostPage({ navigation }) {
   const dispatch = useDispatch();
@@ -97,6 +98,19 @@ export default function PostPage({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
+      <Spinner
+        visible={isProgress}
+        textContent={progressCount}
+        textStyle={{ color: secondary }}
+        customIndicator={
+          <LinearProgress 
+              style={{
+                width: progressCount,
+                }}
+              color={secondary}
+              />
+        }
+      />
 
           <View style={styles.select_gallary_top_holder}>
             <View style={styles.select_gallary_top_action_left}>
@@ -160,23 +174,23 @@ export default function PostPage({ navigation }) {
                 
             </View>
 
-            <View 
-            style={{
-              display: 'flex',
-              width: '100%',
-              bottom: 20,
-              flexDirection: 'row',
-              }}>
-            <LinearProgress 
+            {/* <View 
               style={{
-                width: progressCount,
-                }}
-              color={secondary}
-              />
-              <Text style={{ fontSize: 25 }}>
-                {progressCount}
-              </Text>
-            </View>
+                display: 'flex',
+                width: '100%',
+                bottom: 20,
+                flexDirection: 'row',
+                }}>
+              <LinearProgress 
+                style={{
+                  width: progressCount,
+                  }}
+                color={secondary}
+                />
+                <Text style={{ fontSize: 25 }}>
+                  {progressCount}
+                </Text>
+            </View> */}
           </View>
 
           
