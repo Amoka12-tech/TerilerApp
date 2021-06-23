@@ -49,3 +49,33 @@ export const logout = () => async dispatch => {
         }
     }
 };
+
+export const updateProfilePicture = (body, setIsLoading, configProgress) => async (dispatch) => {
+    setIsLoading(true);
+    try {
+        const { data } = await api.updateProfilePicture(body, configProgress);
+        console.log('Success: ',data);
+        setIsLoading(false),
+        alert(data?.payload?.status);
+    } catch (error) {
+        if(error.response){
+            alert('Error in picture upload');
+        }
+        console.log("Error: ",error);
+    }
+};
+
+export const updateUserProfile = (body) => async (dispatch) => {
+    dispatch({type: START_PROCESS});
+    try {
+        const { data } = await api.updateUserProfile(body);
+        console.log('Profile Success: ',data);
+        dispatch({type: END_PROCESS})
+    } catch (error) {
+        if(error.response){
+            alert(error.response.data.payload);
+        }
+        console.log(error);
+        dispatch({type: END_PROCESS});
+    }
+};

@@ -10,67 +10,10 @@ import styles from './styles';
 import { useFonts, Poppins_900Black, Poppins_900Black_Italic, Poppins_400Regular, Poppins_500Medium, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import PostPage from '../parts/Posts';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
 
 export default function ProfilePage({ navigation }) {
-
-    const postDatas = [
-        {
-          authorID: {
-            _id: '0',
-            name: 'Amoka Abdulmutalib',
-            image: require('../../../img/stories/stories6.png'),
-          },
-          bodyText: 'We are application developers',
-          bodyFile: require('../../../img/sliders/slide2.png'),
-          bodyFileType: 'img',
-          postViews: '2K Views',
-          postLikes: '148',
-          postReposts: '245',
-          postComments: '120',
-        },
-        {
-          authorID: {
-            _id: '1',
-            name: 'Ibrahim Sanni',
-            image: require('../../../img/stories/stories2.png'),
-          },
-          bodyText: '',
-          bodyFile: require('../../../img/sliders/slide1.png'),
-          bodyFileType: 'img',
-          postViews: '2K Views',
-          postLikes: '148',
-          postReposts: '245',
-          postComments: '120',
-        },
-        {
-          authorID: {
-            _id: '2',
-            name: 'Amoka Abdulmutalib',
-            image: require('../../../img/stories/stories6.png'),
-          },
-          bodyText: '',
-          bodyFile: require('../../../img/sliders/slide2.png'),
-          bodyFileType: 'img',
-          postViews: '2K Views',
-          postLikes: '148',
-          postReposts: '245',
-          postComments: '120',
-        },
-        {
-          authorID: {
-            _id: '3',
-            name: 'Usman Habib',
-            image: require('../../../img/stories/stories4.png'),
-          },
-          bodyText: '',
-          bodyFile: require('../../../img/sliders/slide1.png'),
-          bodyFileType: 'img',
-          postViews: '2K Views',
-          postLikes: '148',
-          postReposts: '245',
-          postComments: '120',
-        },
-      ];
+    const postDatas = useSelector((state) => state.post);
 
     return (
         <View style={styles.container}>
@@ -147,7 +90,7 @@ export default function ProfilePage({ navigation }) {
                 </View>
     
                 <View style={styles.post_view}>
-                    <PostPage postDatas={postDatas} />
+                    {/* <PostPage /> */}
                 </View>
             </ScrollView>
          </View>
