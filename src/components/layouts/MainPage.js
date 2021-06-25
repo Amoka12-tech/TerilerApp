@@ -25,6 +25,7 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { ScreenHeight } from 'react-native-elements/dist/helpers';
 import { SliderBox } from 'react-native-image-slider-box';
 import { Video, AVPlaybackStatus } from 'expo-av';
+import { useRoute, useIsFocused } from '@react-navigation/native';
 
 export default function MainPage({ navigation }) {
 
@@ -94,26 +95,12 @@ export default function MainPage({ navigation }) {
     const HomeStack = createStackNavigator();  
     const [selectTop, setSelectTop] = useState(0);
 
-    const scrollToIndexFailed = (error) => {
-      const offset = error.averageItemLength * error.index;
-      flatListRef.scrollToOffset({offset});
-    }    
-
-    let numIn = null;
-
-    const postToggle = (index) => {
-      if(numIn === index){
-        numIn = null;
-        flatListRef.current.scrollToIndex({  animated: true, index: index+1 });
-      }else{
-        numIn = index;
-        flatListRef.current.scrollToIndex({  animated: true, index: index });
-      }
-    };
-
 
     function Home() {
       const dispatch = useDispatch();
+      const route = useRoute();
+      const routeName = route.name;
+      const routeFocused = useIsFocused();
       const [selectPostID, setSelectPostID] = useState('');
       const [selectPostByID, setSelectPostByID] = useState('');
       const [bsIsVisible, setBsIsVisible] = useState(false);
@@ -130,9 +117,15 @@ export default function MainPage({ navigation }) {
       const videoRef = useRef();
 
       useEffect(() => {
-        setTimeout(() => {
-          dispatch(getAllPost());
-        }, 3000);
+        if(routeFocused){
+          setTimeout(() => {
+            dispatch(getAllPost());
+          }, 3000);
+          // console.log(routeName);
+          if(routeName === "MainHome"){
+            setSelectTop(0);
+          }
+        }
       }, []);
 
       const _renderData = ({item, index}) => {
@@ -145,14 +138,18 @@ export default function MainPage({ navigation }) {
             {/* Image Name Post time */}
             <View style={styles.post_person_holder}>
               <View style={styles.post_person_details}>
-                <Avatar 
-                  source={require('../../img/stories/stories4.png')}
-                  size={50}
-                  rounded
-                  containerStyle={{
-                    marginRight: 12,
-                  }}
-                />
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Profile', { userData: { user: item?.postBy} })}
+                >
+                  <Avatar 
+                    source={item?.postBy?.photo ? { uri: item?.postBy?.photo } : require('../../img/stories/stories4.png')}
+                    size={50}
+                    rounded
+                    containerStyle={{
+                      marginRight: 12,
+                    }}
+                  />
+                </TouchableOpacity>
                 <View style={styles.post_person_name_holder}>
                   <Text>{item?.postBy?.username}</Text>
                   <Text>{moment(item?.createdAt).fromNow()}</Text>
@@ -296,7 +293,9 @@ export default function MainPage({ navigation }) {
             ListHeaderComponent={() => {
               return (
                 <View>
-                  <CarouselPage content={items} setActiveIndex={setActiveIndex} activeIndex={activeIndex} />
+                  <SliderBox 
+                    images={items.map(e => e.image)}
+                  />
 
                   <View style={styles.stories_scroll_holder}>
                     <Text style={styles.stories_scroll_header}>Stories</Text>

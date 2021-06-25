@@ -15,6 +15,7 @@ import { Icon } from 'react-native-elements/dist/icons/Icon';
 import CameraPage from '../layouts/screens/post/Camera';
 import GalleryPage from '../layouts/screens/post/Gallery';
 import FullGalleryPage from '../layouts/screens/post/FullGallery';
+import { useRoute } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 

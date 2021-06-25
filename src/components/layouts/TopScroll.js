@@ -42,7 +42,7 @@ export default function TopScroll({ navigation, selectTop, setSelectTop }) {
                         if(item.name !== 'Timeline'){
                             navigation.navigate(item.name);
                         }else{
-                            navigation.popToTop();
+                            navigation.navigate('Timeline');
                         }
                     }}
                 >

@@ -1,11 +1,11 @@
 import { faHeart, faRetweet } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { View, Text, FlatList } from 'react-native';
 import { Avatar,BottomSheet,Image } from 'react-native-elements';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
-import { grey, secondary } from '../../../color';
+import { black, grey, secondary } from '../../../color';
 import styles from '../../../styles';
 import moment from 'moment';
 import { ScreenHeight } from 'react-native-elements/dist/helpers';
@@ -14,8 +14,9 @@ import { Video, AVPlaybackStatus } from 'expo-av';
 import { deletePost } from '../../../actions/post';
 import StoriesPage from './Stories';
 import CarouselPage from './carousel';
+import { useDispatch, useSelector } from 'react-redux';
 
-export default function PostsPage() {
+export default function PostsPage({ postDatas, postTopView }) {
       const dispatch = useDispatch();
       const [selectPostID, setSelectPostID] = useState('');
       const [selectPostByID, setSelectPostByID] = useState('');
@@ -27,10 +28,11 @@ export default function PostsPage() {
       const [videoSelectIndex, setVideoSelectIndex] = useState(null);
 
       const user = useSelector(state => state.auth.user);
-      const postDatas = useSelector(state => state.post);
 
       const flatListRef = useRef();
       const videoRef = useRef();
+
+      const posts = postDatas?.posts?.map((post) => post);
     
   const _renderData = ({item, index}) => {
     return(
@@ -43,7 +45,7 @@ export default function PostsPage() {
         <View style={styles.post_person_holder}>
           <View style={styles.post_person_details}>
             <Avatar 
-              source={require('../../../img/stories/stories4.png')}
+              source={postDatas?.photo  ? { uri: postDatas?.photo } : require('../../../img/stories/stories4.png')}
               size={50}
               rounded
               containerStyle={{
@@ -51,7 +53,7 @@ export default function PostsPage() {
               }}
             />
             <View style={styles.post_person_name_holder}>
-              <Text>{item?.postBy?.username}</Text>
+              <Text>{postDatas?.username}</Text>
               <Text>{moment(item?.createdAt).fromNow()}</Text>
             </View>
           </View>
@@ -60,7 +62,7 @@ export default function PostsPage() {
           <TouchableOpacity
             onPress={() => {
               setSelectPostID(item?._id);
-              setSelectPostByID(item?.postBy?._id);
+              setSelectPostByID(item?.postBy);
               setBsIsVisible(!bsIsVisible);
             }}
           >
@@ -180,17 +182,18 @@ export default function PostsPage() {
 
   return (
     <View style={styles.container}>
-          <FlatList 
+          {postDatas?.posts !== 'undefined' && <FlatList 
             style={{
               flex: 1,
             }}
+            ListHeaderComponent={postTopView}
             ref={flatListRef}
-            data={postDatas}
+            data={postDatas.posts !== 'undefined' ? postDatas?.posts : []}
             renderItem={_renderData}
             keyExtractor={(item, index) => index.toString()}
             pagingEnabled
-            initialNumToRender={5}
-          />
+            showsVerticalScrollIndicator={false}
+          />}
 
           <BottomSheet 
             isVisible={bsIsVisible}

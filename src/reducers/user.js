@@ -4,15 +4,11 @@ export default function(state = [], action) {
     const { type, payload } = action;
     switch (type) {
         case GET_USER:
-            return {
-                ...state, payload
-            };
+            return payload;
         case GET_ALL_USER:
-            return {
-                ...state, payload
-            };
+            return state = payload.map((user) => user);
     
         default:
-            return {...state};
+            return state;
     }
 };

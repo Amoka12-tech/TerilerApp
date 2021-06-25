@@ -46,7 +46,7 @@ export const deletePost = (id, setBs) => async (dispatch) => {
     try {
         const { data } = await api.deletePost(id);
         dispatch({type: DELETE_POST, payload: id});
-        console.log("Message: ",data.payload);
+        alert("Message: ",data.payload);
         setBs(false);
         dispatch({type: END_PROCESS});
     } catch (error) {

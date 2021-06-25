@@ -8,14 +8,18 @@ import { secondary } from '../../../color';
 import styles from '../../../styles';
 import HeadNav from '../Header';
 import TopScroll from '../TopScroll';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function TalentPage({ navigation }) {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const talents = useSelector(state => state.user);
+  const currentUser = useSelector(state => state.auth.user);
 
   useEffect(() => {
     dispatch(getAllUser());
+    console.log("Talents: ",talents);
   }, []);
 
   const render_talent = ({item, index}) => {
@@ -23,35 +27,44 @@ export default function TalentPage({ navigation }) {
       <View style={styles.talent_holder_item}>
         <View style={styles.talent_name_holder}>
           <Text style={styles.talent_name_text}>
-            {item.name}
+            {item?.username}
           </Text>
-          <Icon
+          {item?.accountVerified && <Icon
             type='material'
             name='verified'
             size={24}
             color={secondary}
-          />
+          />}
         </View>
         <Text style={styles.talent_skill_text}>
-          {item.skill}
+          {item?.skill?.map(e => e)}
         </Text>
-        <Image 
-          source={require('../../../img/blank_image.png')} 
-          style={{
-            width: 170,
-            height: 170,
-            marginBottom: 27,
-          }}
-          resizeMode='cover'
-          />
+        <TouchableOpacity onPress={() => navigation.navigate('Profile', { userData: { user: item} })}>
+          <Image 
+            source={item?.photo ? {uri: item?.photo} : require('../../../img/blank_image.png')} 
+            style={{
+              width: 170,
+              height: 170,
+              marginBottom: 27,
+            }}
+            resizeMode='cover'
+            />
+        </TouchableOpacity>
 
-          <View style={styles.talent_follow_holder}>
-            <TouchableOpacity style={styles.talent_touchable}>
-              <Text style={styles.talent_touchable_text}>
+          {item?._id !== currentUser?.user?._id && <View style={styles.talent_follow_holder}>
+            {currentUser?.user?.following?.includes(item._id) ?
+              <TouchableOpacity style={styles.talent_touchable}> 
+                <Text style={styles.talent_touchable_text}>
+                  Unfollow
+                </Text>
+              </TouchableOpacity> : 
+              <TouchableOpacity style={styles.talent_touchable_2}> 
+              <Text style={styles.talent_touchable_text_2}>
                 Follow
               </Text>
             </TouchableOpacity>
-          </View>
+            }
+          </View>}
       </View>
     );
   };
@@ -59,22 +72,13 @@ export default function TalentPage({ navigation }) {
   return (
     <View style={styles.container}>
         <View style={styles.talent_holder}>
-          <FlatList
+          {isFocused && <FlatList
             horizontal={false}
             numColumns={2}
-            data={[
-              {
-                name: 'George Jude',
-                skill: 'Driver',
-              },
-              {
-                name: 'Amaka Smith',
-                skill: 'Fashion Designer',
-              }
-            ]}
+            data={talents}
             renderItem={render_talent}
             keyExtractor={(item, index) => index.toString()}
-          />
+          />}
         </View>
      </View>
   );

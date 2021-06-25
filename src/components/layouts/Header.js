@@ -2,9 +2,11 @@ import React from 'react';
 import { Image } from 'react-native';
 import { View, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { useSelector } from 'react-redux';
 import styles from '../../styles';
 
 export default function HeadNav({ navigation }) {
+  const user = useSelector(state => state.auth.user);
   return (
     <View style={styles.nav_holder}>
       <View style={styles.nav_side_holder}>
@@ -35,7 +37,7 @@ export default function HeadNav({ navigation }) {
             type='ionicon'
             name='person-circle-outline'
             size={30}
-            onPress={() => navigation.navigate('Profile')}
+            onPress={() => navigation.navigate('Profile', { userData: user })}
           />
       </View>
     </View>

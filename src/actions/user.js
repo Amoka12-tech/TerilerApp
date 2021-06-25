@@ -1,13 +1,27 @@
 import * as api from '../api/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { END_PROCESS, GET_ALL_USER, GET_USER, LOGOUT, SIGNIN_USER, START_PROCESS } from '../reducers/types';
+import { END_PROCESS, GET_ALL_USER, GET_USER, LOGOUT, SIGNIN_USER, START_PROCESS, UPDATE_USER } from '../reducers/types';
+
+export const getUser = (id) => async dispatch => {
+    try {
+        dispatch({type: START_PROCESS});
+        const { data } = await api.getUser(id);
+        dispatch({type: GET_USER, payload: data.payload});
+        dispatch({type: END_PROCESS});
+    } catch (error) {
+        if(error.response){
+            alert(error.response.data.payload)
+        }
+        dispatch({type: END_PROCESS});
+    }
+};
 
 export const getAllUser = () => async dispatch => {
     try {
         dispatch({type: START_PROCESS});
         const { data } = await api.getAllUser();
-        // console.log('All_USER_Data: ',data);
-        dispatch({type: GET_ALL_USER, payload: data});
+        // console.log('All_USER_Data: ',data.payload);
+        dispatch({type: GET_ALL_USER, payload: data.payload});
         dispatch({type: END_PROCESS});
     } catch (error) {
         if(error.response){
@@ -26,6 +40,7 @@ export const loadUser = (setIsLoggedIn, setLoading) => async dispatch => {
             dispatch({ type: SIGNIN_USER, payload: jsonData });
             setIsLoggedIn(true); 
             setLoading(false);
+            console.log('Store Data: ',jsonData);
         }else{
             dispatch({ type: END_PROCESS });
         }
@@ -69,8 +84,17 @@ export const updateUserProfile = (body) => async (dispatch) => {
     dispatch({type: START_PROCESS});
     try {
         const { data } = await api.updateUserProfile(body);
-        console.log('Profile Success: ',data);
-        dispatch({type: END_PROCESS})
+        const userData = await AsyncStorage.getItem('@user');
+        const jsonData = userData != null ? JSON.parse(userData) : null;
+        if(jsonData !== null){
+            jsonData.user = data.payload.user;
+            await AsyncStorage.setItem('@user', JSON.stringify(jsonData));
+            const newUserData = await AsyncStorage.getItem('@user');
+            dispatch({type: UPDATE_USER, payload: JSON.parse(newUserData)});
+            dispatch({type: END_PROCESS});
+            alert(data?.payload?.status);
+        }
+        
     } catch (error) {
         if(error.response){
             alert(error.response.data.payload);

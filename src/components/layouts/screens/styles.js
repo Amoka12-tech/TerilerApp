@@ -8,7 +8,6 @@ export default StyleSheet.create({
         padding: 20,
         flexDirection: 'column',
         backgroundColor: white,
-        justifyContent: 'center',
     },
 
     top_nav_holder: {

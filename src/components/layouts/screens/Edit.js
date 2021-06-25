@@ -15,27 +15,47 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
-import { updateProfilePicture } from '../../../actions/user';
+import { updateProfilePicture, updateUserProfile } from '../../../actions/user';
+import getLocation from '../../../actions/others';
+import { Picker } from 'react-native';
 
 export default function ProfileEditPage({ navigation }) {
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.auth.user);
-    const [selectImage, setSelectImage] = useState(null);
+    const [selectImage, setSelectImage] = useState(userData?.user?.photo);
     const [isLoading, setIsLoading] = useState(false);
     const [progressCount, setProgressCount] = useState('0%');
 
+    const dateObj = new Date(Date.now());
+    const month = dateObj.getUTCMonth() + 1;
+    const day = dateObj.getUTCDate();
+    const year = dateObj.getUTCFullYear();
 
-      const [firstName, setFirstName] = useState('');
-      const [lastName, setLastName] = useState('');
-      const [dateOfBirth, setDateOfBirth] = useState('09-10-2020');
-      const [userName, setUserName] = useState('');
+
+      const [firstName, setFirstName] = useState(userData?.user?.firstname);
+      const [lastName, setLastName] = useState(userData?.user?.lastname);
+      const [dateOfBirthString, setDateOfBirthStrinng] = useState(userData?.user?.dob !== null ? userData?.user?.dob : `${day}/${month}/${year}`);
+      const [userName, setUserName] = useState(userData?.user?.username);
       const [email, setEmail] = useState(userData?.user?.email);
-      const [location, setLocation] = useState('');
+      const [location, setLocation] = useState(`${userData?.user?.location?.city}/${userData?.user?.location?.country}`);
+      const [bio, setBio] = useState(userData?.user?.bio);
+      const [skill, setSkill] = useState(userData?.user?.skill.toString());
+      const [gender, setGender] = useState(userData?.user?.gender);
+
+      useEffect(() => {
+          getLocation(setLocation);
+      }, []);
 
       const [showDatePicker, setShowDatePicker] = useState(false);
+      const [dateOfBirth, setDateOfBirth] = useState(dateObj);
 
       const onChangeDOB = (e, selectedDate) => {
-          const currentDate = selectedDate;
+          const currentDate = selectedDate || dateOfBirth;
+          const month = currentDate.getUTCMonth() + 1
+          const day = currentDate.getUTCDate();
+          const year = currentDate.getUTCFullYear();
+          setShowDatePicker(false);
+          setDateOfBirthStrinng(`${day}/${month}/${year}`);
           setDateOfBirth(currentDate);
       }
 
@@ -81,17 +101,24 @@ export default function ProfileEditPage({ navigation }) {
                 dispatch(updateProfilePicture(body, setIsLoading, configProgress));
             }
           }
-        //   const mediaObject = {
-        //     "mediaBinary": thisMedia,
-        //     "ContentType": thisMediaExec,
-        //   };
-
-        //   const body = {
-        //     base64media: mediaObject,
-        //   }
       };
 
-      const onProfileEdit = () => {};
+      const onProfileEdit = () => {
+          const body = {
+            username: userName,
+            firstname: firstName,
+            lastname: lastName,
+            gender: gender,
+            dob: dateOfBirthString,
+            bio: bio,
+            skill: skill,
+            location: {
+                city: location.split("/")[0],
+                country: location.split("/").pop(),
+                }
+            };
+            dispatch(updateUserProfile(body));
+      };
 
     return (
         <View style={styles.container}>
@@ -175,11 +202,34 @@ export default function ProfileEditPage({ navigation }) {
                         placeholder='LastName'
                     />
 
+                    <Picker 
+                        style={{
+                            marginBottom: 10,
+                        }}
+                        selectedValue={gender} onValueChange={(value) => setGender(value)}>
+                        <Picker.Item value="" label="Select Gender" />
+                        <Picker.Item value="Male" label="Male" />
+                        <Picker.Item value="Female" label="Female" />
+                        <Picker.Item value="Other" label="Other" />
+                    </Picker>
+
                     <Input
-                        value={dateOfBirth}
+                        value={dateOfBirthString}
                         placeholder='Date of Birth'
-                        onFocus={() => setShowDatePicker(!showDatePicker)}
+                        onFocus={() => {setShowDatePicker(!showDatePicker)}}
                     />
+
+                    {
+                        showDatePicker && (
+                            <DateTimePicker 
+                                testID="dateTimePicker"
+                                value={dateOfBirth}
+                                mode='date'
+                                display='calendar'
+                                onChange={onChangeDOB}
+                            />
+                        )
+                    }
 
                     <Input 
                         value={userName}
@@ -196,18 +246,33 @@ export default function ProfileEditPage({ navigation }) {
                     />
 
                     <Input 
+                        value={skill}
+                        onChangeText={(value) => setSkill(value)}
+                        placeholder="Skill"
+                    />
+
+                    <Input 
                         value={location}
                         onChangeText={(value) => setLocation(value)}
                         textContentType='addressCityAndState'
                         placeholder='State/Country'
                     />
+
+                    <Input 
+                        value={bio}
+                        onChangeText={(value) => setBio(value)}
+                        placeholder="About me"
+                        multiline={true}
+                        maxLength={50}
+                    />
+
+                    <TouchableOpacity onPress={onProfileEdit} style={styles.next_button}>
+                        <Text style={styles.next_text}>Save</Text>
+                    </TouchableOpacity>
                 </View>
                 
             </ScrollView>
 
-            <TouchableOpacity style={styles.next_button}>
-                <Text style={styles.next_text}>Save</Text>
-            </TouchableOpacity>
             
          </View>
       );
