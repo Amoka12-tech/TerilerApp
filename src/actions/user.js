@@ -103,3 +103,52 @@ export const updateUserProfile = (body) => async (dispatch) => {
         dispatch({type: END_PROCESS});
     }
 };
+
+
+export const followUser = (id) => async (dispatch) => {
+    dispatch({type: START_PROCESS});
+    try {
+        const { data } = await api.followUser(id);
+        const userData = await AsyncStorage.getItem('@user');
+        const jsonData = userData != null ? JSON.parse(userData) : null;
+        if(jsonData !== null){
+            jsonData.user = data.payload.user;
+            await AsyncStorage.setItem('@user', JSON.stringify(jsonData));
+            const newUserData = await AsyncStorage.getItem('@user');
+            dispatch({type: UPDATE_USER, payload: JSON.parse(newUserData)});
+            dispatch({type: END_PROCESS});
+            alert(data?.payload?.status);
+        }
+        
+    } catch (error) {
+        if(error.response){
+            alert(error.response.data.payload);
+        }
+        console.log(error);
+        dispatch({type: END_PROCESS});
+    }
+};
+
+export const unFollowUser = (id) => async (dispatch) => {
+    dispatch({type: START_PROCESS});
+    try {
+        const { data } = await api.unFollowUser(id);
+        const userData = await AsyncStorage.getItem('@user');
+        const jsonData = userData != null ? JSON.parse(userData) : null;
+        if(jsonData !== null){
+            jsonData.user = data.payload.user;
+            await AsyncStorage.setItem('@user', JSON.stringify(jsonData));
+            const newUserData = await AsyncStorage.getItem('@user');
+            dispatch({type: UPDATE_USER, payload: JSON.parse(newUserData)});
+            dispatch({type: END_PROCESS});
+            alert(data?.payload?.status);
+        }
+        
+    } catch (error) {
+        if(error.response){
+            alert(error.response.data.payload);
+        }
+        console.log(error);
+        dispatch({type: END_PROCESS});
+    }
+};

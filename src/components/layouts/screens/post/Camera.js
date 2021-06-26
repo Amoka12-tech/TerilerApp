@@ -248,7 +248,7 @@ export default function CameraPage({ navigation }) {
           </View>
 
           <TouchableOpacity 
-            onPress={() => navigation.navigate('FullGallery')}
+            onPress={() => navigation.navigate('AlbumGallery')}
             style={styles.camera_direction_holder}>
             <Icon 
               type='simple-line-icon'

@@ -16,6 +16,7 @@ import CameraPage from '../layouts/screens/post/Camera';
 import GalleryPage from '../layouts/screens/post/Gallery';
 import FullGalleryPage from '../layouts/screens/post/FullGallery';
 import { useRoute } from '@react-navigation/native';
+import AlbumGalleryPage from '../layouts/screens/post/AlbumGallery';
 
 const Tab = createBottomTabNavigator();
 
@@ -41,6 +42,10 @@ const PostStackScreen = () => {
              <PostStack.Screen 
                 name = "FullGallery"
                 component = {FullGalleryPage}
+             />
+             <PostStack.Screen 
+                name = "AlbumGallery"
+                component = {AlbumGalleryPage}
              />
          </PostStack.Navigator>
     );

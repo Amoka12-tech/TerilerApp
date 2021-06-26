@@ -10,7 +10,7 @@ import { useFonts, Poppins_900Black, Poppins_900Black_Italic, Poppins_400Regular
 import PostPage from '../parts/Posts';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUser } from '../../../actions/user';
+import { followUser, getUser, unFollowUser } from '../../../actions/user';
 
 export default function ProfilePage({ route, navigation }) {
     const dispatch = useDispatch();
@@ -51,16 +51,22 @@ export default function ProfilePage({ route, navigation }) {
                 
 
                 {postDatas?._id !== currentUser?.user?._id && <View style={styles.other_user_action_holder}>
-                    <TouchableOpacity style={styles.other_user_action_item}>
-                        {postDatas?.followers?.includes(currentUser?.user?._id) ? 
-                            <Text style={styles.other_user_action_item_text}>
-                                Unfollow
-                            </Text> :
-                            <Text style={styles.other_user_action_item_text}>
-                                Follow
-                            </Text>
+                        {currentUser?.user?.following?.includes(postDatas?._id) ? 
+                            <TouchableOpacity 
+                                onPress={() => dispatch(unFollowUser(postDatas?._id))}
+                                style={styles.other_user_action_item}>
+                                <Text style={styles.other_user_action_item_text}>
+                                    Unfollow
+                                </Text>
+                            </TouchableOpacity> :
+                            <TouchableOpacity 
+                                onPress={() => dispatch(followUser(postDatas?._id))}
+                                style={styles.other_user_action_item}>
+                                <Text style={styles.other_user_action_item_text}>
+                                    Follow
+                                </Text>
+                            </TouchableOpacity>
                         }
-                    </TouchableOpacity>
 
                     <TouchableOpacity style={styles.other_user_action_item_2}>
                         <Text style={styles.other_user_action_item_text_2}>

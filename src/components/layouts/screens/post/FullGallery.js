@@ -10,7 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ADD_MEDIA, REMOVE_ALL_MEDIA, REMOVE_MEDIA, UPDATE_MEDIA } from '../../../../reducers/types';
 
 
-export default function FullGalleryPage({ navigation }) {
+export default function FullGalleryPage({ navigation, route }) {
+  const { id } = route.params;
   const dispatch = useDispatch();
   const [mediaLibraryPermission, setMediaLibraryPermission] = useState(null);
   const [cameraRollPermission, setCameraRollPermission] = useState(null);
@@ -34,7 +35,7 @@ export default function FullGalleryPage({ navigation }) {
     const mediaData = await MediaLibrary.getAssetsAsync({
       mediaType: ['photo', 'video'],
       sortBy: ['creationTime'],
-      first: 50,
+      album: id,
     });
     setListMedia(mediaData);
   };
