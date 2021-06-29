@@ -1,11 +1,11 @@
-import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect, useRef, useState } from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
 import { FlatList } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { View, Text, ScrollView } from 'react-native';
 import { Avatar, Icon, Image, Tooltip, BottomSheet } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
-import { deletePost, getAllPost } from '../../actions/post';
+import { deletePost, getAllPost, likePost, loadMorePost } from '../../actions/post';
 import { logout } from '../../actions/user';
 import { black, grey, overlayColor, secondary, white } from '../../color';
 import styles from '../../styles';
@@ -21,7 +21,7 @@ import WorkPage from './screens/Work';
 import TopScroll from './TopScroll';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { ScreenHeight } from 'react-native-elements/dist/helpers';
 import { SliderBox } from 'react-native-image-slider-box';
 import { Video, AVPlaybackStatus } from 'expo-av';
@@ -37,68 +37,64 @@ export default function MainPage({ navigation }) {
     // console.log('User',user);
     // console.log('Post',postInfo);
 
-    const items = [
-      {
-        text : 'First Slide',
-        image : require('../../img/sliders/slide1.png')
-      },
-      {
-        text : 'Second Slide',
-        image : require('../../img/sliders/slide2.png')
-      },
-      {
-        text : 'Fourth Slide',
-        image : require('../../img/sliders/slide1.png')
-      },
-      {
-        text : 'Last Slide',
-        image : require('../../img/sliders/slide2.png')
-      },
-    ];
-
-
-    //Array of latest stories
-    const stories = [
-      {
-        key : '0',
-        image : require('../../img/stories/stories6.png')
-      },
-      {
-        key : '1',
-        image : require('../../img/stories/stories1.png')
-      },
-      {
-        key : '2',
-        image : require('../../img/stories/stories2.png')
-      },
-      {
-        key : '3',
-        image : require('../../img/stories/stories3.png')
-      },
-      {
-        key : '4',
-        image : require('../../img/stories/stories4.png')
-      },
-      {
-        key : '5',
-        image : require('../../img/stories/stories5.png')
-      },
-      {
-        key : '6',
-        image : require('../../img/stories/stories6.png')
-      },
-    ];
-
-
-    
-
     const HomeStack = createStackNavigator();  
     const [selectTop, setSelectTop] = useState(0);
 
 
-    function Home() {
+    function Home({ navigation, route }) {
+      const items = [
+        {
+          text : 'First Slide',
+          image : require('../../img/sliders/slide1.png')
+        },
+        {
+          text : 'Second Slide',
+          image : require('../../img/sliders/slide2.png')
+        },
+        {
+          text : 'Fourth Slide',
+          image : require('../../img/sliders/slide1.png')
+        },
+        {
+          text : 'Last Slide',
+          image : require('../../img/sliders/slide2.png')
+        },
+      ];
+  
+  
+      //Array of latest stories
+      const stories = [
+        {
+          key : '0',
+          image : require('../../img/stories/stories6.png')
+        },
+        {
+          key : '1',
+          image : require('../../img/stories/stories1.png')
+        },
+        {
+          key : '2',
+          image : require('../../img/stories/stories2.png')
+        },
+        {
+          key : '3',
+          image : require('../../img/stories/stories3.png')
+        },
+        {
+          key : '4',
+          image : require('../../img/stories/stories4.png')
+        },
+        {
+          key : '5',
+          image : require('../../img/stories/stories5.png')
+        },
+        {
+          key : '6',
+          image : require('../../img/stories/stories6.png')
+        },
+      ];
+
       const dispatch = useDispatch();
-      const route = useRoute();
       const routeName = route.name;
       const routeFocused = useIsFocused();
       const [selectPostID, setSelectPostID] = useState('');
@@ -116,17 +112,24 @@ export default function MainPage({ navigation }) {
       const flatListRef = useRef();
       const videoRef = useRef();
 
+      const [postSkip, setPostSkip] = useState(0);
+      const [postLimit, setPostLimit] = useState(5);
+      const [postLoad, setPostLoad] = useState(false);
+      const [loadingMore, setLoadingMore] = useState(false);
+
       useEffect(() => {
-        if(routeFocused){
+        if(postLoad === false){
           setTimeout(() => {
-            dispatch(getAllPost());
+            dispatch(getAllPost(postSkip, setPostSkip, postLimit, setPostLimit));
+            setPostLoad(true);
           }, 3000);
-          // console.log(routeName);
-          if(routeName === "MainHome"){
-            setSelectTop(0);
-          }
         }
       }, []);
+
+      const loadMore = () => {
+        console.log(postSkip, postLimit);
+        dispatch(loadMorePost(postSkip, setPostSkip, postLimit, setPostLimit, setLoadingMore));
+      };
 
       const _renderData = ({item, index}) => {
         return(
@@ -192,14 +195,14 @@ export default function MainPage({ navigation }) {
                     source={{ 
                       uri: item?.media[0]
                     }}
-                    useNativeControls={false}
+                    useNativeControls={true}
                     resizeMode='contain'
                     isLooping={false}
                     onPlaybackStatusUpdate={status => setVideoStatus(() => status)}
                     status={{ shouldPlay: videoSelectIndex === index ? true : false }}
                   />
 
-                  <TouchableOpacity 
+                  {/* <TouchableOpacity 
                     onPress={() => {
                       if(videoSelectIndex === index){
                         setVideoSelectIndex(null);
@@ -218,7 +221,7 @@ export default function MainPage({ navigation }) {
                           color={secondary}
                         />
                     }
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
                 </View>
                 
@@ -231,43 +234,53 @@ export default function MainPage({ navigation }) {
   
             <View style={styles.post_actions_holder}>
               <View style={styles.post_actions_left}>
+                <FontAwesomeIcon 
+                  icon={faEye}
+                  size={20}
+                  color={grey}
+                />
                 <Text style={styles.post_actions_text}>
                   {item?.postViewBy?.length} Views
                 </Text>
               </View>
               <View style={styles.post_actions_right}>
-                <TouchableOpacity style={styles.post_actions_right_item}>
+                <TouchableOpacity 
+                  onPress={() => dispatch(likePost(item?._id))}
+                  style={styles.post_actions_right_item}>
                   <FontAwesomeIcon 
                     icon={faHeart}
                     size={20}
                     color={secondary}
                   />
-                  <Text style={styles.post_actions_text, {color: secondary}}>
-                    0 Likes
+                  <Text style={styles.post_actions_text, {color: secondary, marginLeft: 5}}>
+                    {item?.postLikeBy?.length} 
                   </Text>
                 </TouchableOpacity>
   
                 <TouchableOpacity style={styles.post_actions_right_item}>
                   <Icon 
-                    type='entypo'
+                    type='evilicon'
                     name='retweet'
                     size={25}
                     color={grey}
                   />
                   <Text style={styles.post_actions_text}>
-                    {item?.repostBy?.length} Repost
+                    {item?.repostBy?.length}
                   </Text>
                 </TouchableOpacity>
   
                 <TouchableOpacity style={styles.post_actions_right_item}>
                   <Icon 
-                    type='fontisto'
-                    name='comment'
+                    type='ionicon'
+                    name='chatbubble-outline'
+                    containerStyle={{
+                      transform: [{scaleX: -1}]
+                    }}
                     size={20}
                     color={grey}
                   />
                   <Text style={styles.post_actions_text}>
-                    {item?.comments?.length} Comments
+                    {item?.comments?.length}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -287,14 +300,22 @@ export default function MainPage({ navigation }) {
             ref={flatListRef}
             data={postInfo}
             renderItem={_renderData}
+            onScrollEndDrag={() => {
+              if(loadingMore === false){
+                dispatch(loadMorePost(postSkip, setPostSkip, postLimit, setPostLimit, setLoadingMore));
+              }
+            }}
             keyExtractor={(item, index) => index.toString()}
-            pagingEnabled
-            initialNumToRender={5}
+            showsVerticalScrollIndicator={false}
+            onScrollToTop={() => console.log('we want refresh')}
             ListHeaderComponent={() => {
               return (
                 <View>
                   <SliderBox 
                     images={items.map(e => e.image)}
+                    ImageComponentStyle={{
+                      height: 80,
+                    }}
                   />
 
                   <View style={styles.stories_scroll_holder}>
@@ -302,6 +323,25 @@ export default function MainPage({ navigation }) {
                     <StoriesPage listItem={stories} />
                   </View>
                 </View>
+              );
+            }}
+            ListFooterComponent={() => {
+              return (
+                postLoad !== false ? <View style={styles.load_more_holder}>
+                  <TouchableOpacity 
+                    disabled={loadingMore}
+                    onPress={loadMore}
+                    style={styles.load_more_touchable}>
+                    {loadingMore ? <Text style={styles.load_more_text}>
+                      Loading...
+                    </Text> : 
+                    <Text style={styles.load_more_text}>
+                      Load More
+                    </Text>
+                    }
+                  </TouchableOpacity>
+                </View>
+                : <View />
               );
             }}
           />

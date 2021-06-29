@@ -126,7 +126,7 @@ export default function AlbumGalleryPage({ navigation }) {
                           justifyContent: 'center',
                           alignItems: 'center',
                            }}>
-              <FlatList 
+              {albumArray.length > 0 ? <FlatList 
                 horizontal={false}
                 numColumns={2}
                 keyExtractor={(item, index) => index.toString()}
@@ -134,7 +134,10 @@ export default function AlbumGalleryPage({ navigation }) {
                 columnWrapperStyle={{ justifyContent: 'space-between'}}
                 renderItem={singleMedia}
                 pagingEnabled={true}
-              />
+              /> : 
+              <View style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Loading...</Text>
+              </View>}
 
               
           </View>

@@ -40,7 +40,7 @@ export const loadUser = (setIsLoggedIn, setLoading) => async dispatch => {
             dispatch({ type: SIGNIN_USER, payload: jsonData });
             setIsLoggedIn(true); 
             setLoading(false);
-            console.log('Store Data: ',jsonData);
+            // console.log('Store Data: ',jsonData);
         }else{
             dispatch({ type: END_PROCESS });
         }

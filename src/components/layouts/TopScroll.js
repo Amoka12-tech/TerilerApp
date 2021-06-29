@@ -40,9 +40,11 @@ export default function TopScroll({ navigation, selectTop, setSelectTop }) {
                     onPress={()=>{
                         setSelectTop(index);
                         if(item.name !== 'Timeline'){
-                            navigation.navigate(item.name);
+                            if(item.name === 'Talent'){
+                                navigation.navigate(item.name);
+                            }
                         }else{
-                            navigation.navigate('Timeline');
+                            navigation.navigate('MainHome');
                         }
                     }}
                 >

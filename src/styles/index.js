@@ -262,10 +262,14 @@ export default StyleSheet.create({
         fontWeight: '500',
         fontStyle: 'normal',
         color: grey,
+        marginLeft: 5,
     },
 
     post_actions_left: {
         paddingLeft: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 
     post_actions_right: {
@@ -326,7 +330,6 @@ export default StyleSheet.create({
     post_video: {
         alignSelf: 'center',
         width: '100%',
-        height: 220,
     },
 
     post_video_icon: {
@@ -431,6 +434,32 @@ export default StyleSheet.create({
         fontStyle: 'normal',
         fontWeight: '600',
         color: secondary,
+        textAlign: 'center',
+        textAlignVertical: 'center',
+    },
+
+    load_more_holder: {
+        display: 'flex',
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    load_more_touchable: {
+        width: 140,
+        padding: 5,
+        borderRadius: 10,
+        backgroundColor: grey,
+        alignItems: 'center',
+    },
+
+    load_more_text: {
+        fontSize: 14,
+        fontFamily: 'Poppins_600SemiBold',
+        fontStyle: 'normal',
+        fontWeight: '600',
+        color: white,
         textAlign: 'center',
         textAlignVertical: 'center',
     },

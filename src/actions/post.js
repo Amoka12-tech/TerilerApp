@@ -1,21 +1,37 @@
 import * as api from '../api/post';
-import { CREATE_POST, DELETE_POST, END_PROCESS, GET_ALL_POST, REMOVE_ALL_MEDIA, START_PROCESS } from '../reducers/types';
+import { CREATE_POST, DELETE_POST, END_PROCESS, GET_ALL_POST, LOAD_MORE_POST, REMOVE_ALL_MEDIA, START_PROCESS, UPDATE_POST } from '../reducers/types';
 
 const config = {
     onUploadProgress: progressEvent => console.log(progressEvent.loaded),
 };
 
-export const getAllPost = () => async (dispatch) => {
-    dispatch({type: START_PROCESS});
+//get initial all posts with initial limits
+export const getAllPost = (postSkip, setPostSkip, postLimit, setPostLimit) => async (dispatch) => {
     try {
-        const { data } = await api.getAllPost();
+        const { data } = await api.getAllPost(postSkip, postLimit);
         dispatch({type: GET_ALL_POST, payload: data.payload});
-        dispatch({type: END_PROCESS});
+        setPostSkip(postLimit);
+        setPostLimit(postLimit*2);
     } catch (error) {
         if(error.response){
             console.log("Get Post Error: ", error.response.data.payload);
         }
-        dispatch({type: END_PROCESS});
+    }
+};
+
+//Load more posts with skip and limit from previous
+export const loadMorePost = (postSkip, setPostSkip, postLimit, setPostLimit, setLoading) => async (dispatch) => {
+    try {
+        setLoading(true);
+        const { data } = await api.getAllPost(postSkip, postLimit);
+        dispatch({type: LOAD_MORE_POST, payload: data.payload});
+        setPostSkip(postLimit);
+        setPostLimit(postLimit*2);
+        setLoading(false);
+    } catch (error) {
+        if(error.response){
+            alert("Get Post Error: ", error.response.data.payload);
+        }
     }
 };
 
@@ -55,6 +71,20 @@ export const deletePost = (id, setBs) => async (dispatch) => {
             setBs(false);
         }
         setBs(false);
+        dispatch({type: END_PROCESS});
+    }
+};
+
+export const likePost = (id) => async (dispatch) => {
+    try {
+        dispatch({type: START_PROCESS});
+        const { data } = await api.likePost(id);
+        dispatch({type: UPDATE_POST, payload: data?.payload});
+        dispatch({type: END_PROCESS});
+    } catch (error) {
+        if(error.response){
+            alert(error.response.data.payload);
+        }
         dispatch({type: END_PROCESS});
     }
 };
