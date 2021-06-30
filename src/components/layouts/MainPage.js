@@ -18,6 +18,7 @@ import LocationPage from './screens/Location';
 import ProfilePage from './screens/Profile';
 import TalentPage from './screens/Talent';
 import WorkPage from './screens/Work';
+import ChatPage from './screens/Chat';
 import TopScroll from './TopScroll';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -27,7 +28,7 @@ import { SliderBox } from 'react-native-image-slider-box';
 import { Video, AVPlaybackStatus } from 'expo-av';
 import { useRoute, useIsFocused } from '@react-navigation/native';
 
-export default function MainPage({ navigation }) {
+export default function MainPage({ navigation, route }) {
 
     
     const getItemLayout = (data, index) => {
@@ -185,13 +186,17 @@ export default function MainPage({ navigation }) {
                 item.media[0].split(".").pop() === 'mp4' ? 
                 
                 <View style={{
+                  flex: 1,
                   width: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                 }}>
                   <Video 
                     ref={videoRef}
-                    style={styles.post_video}
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                    }}
                     source={{ 
                       uri: item?.media[0]
                     }}
@@ -301,7 +306,7 @@ export default function MainPage({ navigation }) {
             data={postInfo}
             renderItem={_renderData}
             onScrollEndDrag={() => {
-              if(loadingMore === false){
+              if(loadingMore === false && postInfo.length > 0){
                 dispatch(loadMorePost(postSkip, setPostSkip, postLimit, setPostLimit, setLoadingMore));
               }
             }}
@@ -330,7 +335,6 @@ export default function MainPage({ navigation }) {
                 postLoad !== false ? <View style={styles.load_more_holder}>
                   <TouchableOpacity 
                     disabled={loadingMore}
-                    onPress={loadMore}
                     style={styles.load_more_touchable}>
                     {loadingMore ? <Text style={styles.load_more_text}>
                       Loading...
@@ -433,7 +437,7 @@ export default function MainPage({ navigation }) {
               backgroundColor: white,
                }}>
             <HeadNav navigation={navigation} />
-            <TopScroll navigation={navigation} selectTop={selectTop} setSelectTop={setSelectTop} />
+            <TopScroll navigation={navigation} route={route} />
           </View>
         );
       }

@@ -189,6 +189,7 @@ export default StyleSheet.create({
     },
 
     top_text: {
+        fontFamily: 'Poppins_600SemiBold',
         fontSize: 24,
         fontWeight: '600',
         fontStyle: 'normal'
@@ -315,4 +316,47 @@ export default StyleSheet.create({
         borderRadius: 5,
         marginRight: 5,
     },
+
+    chat_container: {
+        flex: 1,
+        padding: 10,
+    },
+
+    chatMessageHolder: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+    },
+
+    chatBodyPreviewHolder: {
+        display: 'flex',
+        flexDirection: 'column',
+        marginLeft: 15,
+        width: '80%'
+    },
+
+    chatBodyPreviewTitle: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    chatBodyPreviewTextHolder: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 4,
+    },
+
+    messageNumberText: {
+        display: 'flex',
+        color: white,
+        backgroundColor: secondary,
+        height: 18,
+        width: 9,
+        borderRadius: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });

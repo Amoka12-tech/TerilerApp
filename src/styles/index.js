@@ -205,6 +205,7 @@ export default StyleSheet.create({
     },
 
     post_holder: {
+        flex: 1,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
@@ -212,6 +213,7 @@ export default StyleSheet.create({
     },
 
     post_person_holder: {
+        flex: 1,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -231,6 +233,7 @@ export default StyleSheet.create({
     },
 
     post_body_holder: {
+        flex: 1,
         display: 'flex',
         flexDirection: 'column',
         marginBottom: 10,
@@ -330,6 +333,7 @@ export default StyleSheet.create({
     post_video: {
         alignSelf: 'center',
         width: '100%',
+        maxHeight: 300,
     },
 
     post_video_icon: {

@@ -5,7 +5,7 @@ export default function(post = [], action){
 
     switch (type) {
         case CREATE_POST:
-            return [...post, payload].sort((a, b) => b.createdAt - a.createdAt);
+            return [...post, payload].sort((a, b) => -1);
 
         case GET_ALL_POST:
             return payload;

@@ -3,7 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { View, Text, ScrollView, FlatList, Image } from 'react-native';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllUser } from '../../../actions/user';
+import { followUser, getAllUser, unFollowUser } from '../../../actions/user';
 import { secondary } from '../../../color';
 import styles from '../../../styles';
 import HeadNav from '../Header';
@@ -52,13 +52,17 @@ export default function TalentPage({ navigation }) {
         </TouchableOpacity>
 
           {item?._id !== currentUser?.user?._id && <View style={styles.talent_follow_holder}>
-            {currentUser?.user?.following?.includes(item._id) ?
-              <TouchableOpacity style={styles.talent_touchable}> 
+            {currentUser?.user?.following?.includes(item?._id) ?
+              <TouchableOpacity 
+                onPress={() => dispatch(unFollowUser(item?._id))}
+                style={styles.talent_touchable}> 
                 <Text style={styles.talent_touchable_text}>
                   Unfollow
                 </Text>
               </TouchableOpacity> : 
-              <TouchableOpacity style={styles.talent_touchable_2}> 
+              <TouchableOpacity 
+                onPress={() => dispatch(followUser(item?._id))}
+                style={styles.talent_touchable_2}> 
               <Text style={styles.talent_touchable_text_2}>
                 Follow
               </Text>

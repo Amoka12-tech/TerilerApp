@@ -4,7 +4,7 @@ const API = apiRoute;
 
 export const createPost = (body, configProgress) => API.post('/api/post/new', body, configProgress);
 
-export const getAllPost = (postSkip, postLimit) => API.get(`/api/post/${postSkip}/${postLimit}`);
+export const getAllPost = (postSkip, postLimit) => API.get(`/api/post/sort/${postSkip}/${postLimit}`);
 
 export const getPost = (id) => API.get(`/api/post/${id}`);
 

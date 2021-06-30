@@ -1,9 +1,11 @@
+import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity } from 'react-native';
 import { View, Text, ScrollView } from 'react-native';
 import styles from '../../styles';
 
-export default function TopScroll({ navigation, selectTop, setSelectTop }) {
+export default function TopScroll({ navigation, route }) {
+    const routeName = useRoute().name;
     
   return (
       <FlatList 
@@ -17,7 +19,7 @@ export default function TopScroll({ navigation, selectTop, setSelectTop }) {
         data = {[
             {
                 key : '1',
-                name : 'Timeline'
+                name : 'MainHome'
             },
             {
                 key : '2',
@@ -36,10 +38,9 @@ export default function TopScroll({ navigation, selectTop, setSelectTop }) {
             <View key={index} style={styles.top_scroll}>
                 
                 <TouchableOpacity 
-                    style={selectTop === index? styles.top_scroll_active_item : styles.top_scroll_item}
+                    style={routeName === item.name? styles.top_scroll_active_item : styles.top_scroll_item}
                     onPress={()=>{
-                        setSelectTop(index);
-                        if(item.name !== 'Timeline'){
+                        if(item.name !== 'MainHome'){
                             if(item.name === 'Talent'){
                                 navigation.navigate(item.name);
                             }
@@ -48,8 +49,8 @@ export default function TopScroll({ navigation, selectTop, setSelectTop }) {
                         }
                     }}
                 >
-                    <Text style={selectTop === index? styles.top_scroll_active_item_text : styles.top_scroll_item_text}>
-                        {item.name}
+                    <Text style={routeName === item.name? styles.top_scroll_active_item_text : styles.top_scroll_item_text}>
+                        {item.name === 'MainHome' ? 'Timeline' : item.name}
                     </Text>
                 </TouchableOpacity>
                 
