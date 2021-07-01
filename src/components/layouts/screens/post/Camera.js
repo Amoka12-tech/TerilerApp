@@ -12,6 +12,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { ADD_MEDIA, UPDATE_MEDIA } from '../../../../reducers/types';
 import { v4 as uuidv4 } from 'uuid';
+import { Audio } from 'expo-av';
 
 export default function CameraPage({ navigation }) {
   const dispatch = useDispatch();
@@ -21,10 +22,15 @@ export default function CameraPage({ navigation }) {
   const [cameraFlash, setCameraFlash] = useState(Camera.Constants.FlashMode.off);
   const [canSnap, setCanSnap] = useState(false);
   const [sheetIsVisible, setSheetISVisible] = useState(true);
+
+  const [cameraUse, setCameraUse] = useState('camera');
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordTime, setRecordTime] = useState(0);
   
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestPermissionsAsync();
+      await Audio.requestPermissionsAsync();
       setHasCameraPermission(status === 'granted');
     })();
   });
@@ -50,6 +56,14 @@ export default function CameraPage({ navigation }) {
         onSwipeDown(gestureState);
         break;
     }
+  };
+
+  const onCameraSelect = () => {
+    setCameraUse('camera');
+  };
+
+  const onVideoSelect = () => {
+    setCameraUse('video');
   };
 
   const cameraRef = useRef();
@@ -104,14 +118,43 @@ export default function CameraPage({ navigation }) {
   const snap = async () => {
     if(cameraRef){
       setCanSnap(true);
-      const cameraData = await cameraRef.current.takePictureAsync();
-      const fileName = cameraData.uri.substr(cameraData.uri.lastIndexOf("/")+1);
-      const imageId = fileName.split('.').shift();
-      cameraData.mediaType = 'photo';
-      cameraData.filename = fileName;
-      cameraData.id = imageId;
-      
-      dispatch({ type: UPDATE_MEDIA, payload: cameraData });
+      if(cameraUse === 'camera'){
+        const cameraData = await cameraRef.current.takePictureAsync();
+        const fileName = cameraData.uri.substr(cameraData.uri.lastIndexOf("/")+1);
+        const imageId = fileName.split('.').shift();
+        cameraData.mediaType = 'photo';
+        cameraData.filename = fileName;
+        cameraData.id = imageId;
+        
+        dispatch({ type: UPDATE_MEDIA, payload: cameraData });
+        setCanSnap(false);
+      }else{
+        const { status } = await Audio.getPermissionsAsync();
+        if(status === 'granted'){
+          if(isRecording === false){
+            setIsRecording(true);
+            const videoData = await cameraRef.current.recordAsync({
+              maxDuration: 60,
+              quality: Camera.Constants.VideoQuality['360p'],
+            });
+            const fileName = videoData.uri.substr(videoData.uri.lastIndexOf("/")+1);
+            const videoId = fileName.split('.').shift();
+            videoData.mediaType = 'video';
+            videoData.filename = fileName;
+            videoData.id = videoId;
+            dispatch({type: ADD_MEDIA, payload: [videoData] });
+            setIsRecording(false);
+            setCanSnap(false);
+          }
+        }
+      };
+    }
+  };
+
+  const stopRecording = async () => {
+    if(isRecording){
+      const videoData = await cameraRef.current.stopRecording();
+      setIsRecording(false);
       setCanSnap(false);
     }
   };
@@ -210,13 +253,31 @@ export default function CameraPage({ navigation }) {
               <Text style={styles.bottom_camera_action_text}>Post</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity>
-              <Text style={styles.bottom_camera_action_text_active}>Camera</Text>
-            </TouchableOpacity>
+            {
+             cameraUse === 'camera' ? <TouchableOpacity 
+                onPress={onCameraSelect}
+              >
+                <Text style={ cameraUse === 'camera'? styles.bottom_camera_action_text_active : styles.bottom_camera_action_text}>Camera</Text>
+              </TouchableOpacity> : 
+              <TouchableOpacity 
+                onPress={onVideoSelect}
+              >
+                <Text style={ cameraUse === 'video'? styles.bottom_camera_action_text_active : styles.bottom_camera_action_text}>Video</Text>
+              </TouchableOpacity>
+            }
 
-            <TouchableOpacity>
-              <Text style={styles.bottom_camera_action_text}>Video</Text>
+{
+             cameraUse === 'camera' ? <TouchableOpacity 
+             onPress={onVideoSelect}
+           >
+             <Text style={ cameraUse === 'video'? styles.bottom_camera_action_text_active : styles.bottom_camera_action_text}>Video</Text>
+           </TouchableOpacity> : 
+              <TouchableOpacity 
+              onPress={onCameraSelect}
+            >
+              <Text style={ cameraUse === 'camera'? styles.bottom_camera_action_text_active : styles.bottom_camera_action_text}>Camera</Text>
             </TouchableOpacity>
+            }
           </View>
 
           <View style={styles.capture_camera_button}>
@@ -234,6 +295,13 @@ export default function CameraPage({ navigation }) {
               />
             </TouchableOpacity>
 
+            {isRecording ? <Icon 
+              type='ionicon'
+              name='md-stop-circle-sharp'
+              color={white}
+              size={34}
+              onPress={stopRecording}
+            /> : 
             <Icon 
               type='ionicon'
               name='ios-camera-reverse'
@@ -244,7 +312,7 @@ export default function CameraPage({ navigation }) {
                 Camera.Constants.Type.front : 
                 Camera.Constants.Type.back
               )}
-            />
+            />}
           </View>
 
           <TouchableOpacity 

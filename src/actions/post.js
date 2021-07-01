@@ -47,7 +47,7 @@ export const createPost = (body, navigation, configProgress, setIsProgress) => a
         navigation.navigate('Main');
     } catch (error) {
         if(error.response){
-            console.log(error.response.data);
+            alert(error.response.data.payload);
         }
         console.log('Error',error.response.data.payload);
         setIsProgress(false);
@@ -58,16 +58,15 @@ export const createPost = (body, navigation, configProgress, setIsProgress) => a
 
 export const deletePost = (id, setBs) => async (dispatch) => {
     dispatch({type: START_PROCESS});
-    console.log(id);
     try {
         const { data } = await api.deletePost(id);
         dispatch({type: DELETE_POST, payload: id});
-        alert("Message: ",data.payload);
+        alert("Post Deleted");
         setBs(false);
         dispatch({type: END_PROCESS});
     } catch (error) {
         if(error.response){
-            console.log("Error: ",error.response.data.payload);
+            alert("Error: ",error.response.data.payload);
             setBs(false);
         }
         setBs(false);

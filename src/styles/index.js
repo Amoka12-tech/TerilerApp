@@ -468,6 +468,14 @@ export default StyleSheet.create({
         textAlignVertical: 'center',
     },
 
+    comment_box: {
+        width: '100%',
+        height: 50,
+        backgroundColor: 'rgba(93, 61, 206, 0.06)',
+        borderRadius: 33,
+        paddingLeft: 5,
+    },
+
     container: {
         flex: 1,
         backgroundColor: white,

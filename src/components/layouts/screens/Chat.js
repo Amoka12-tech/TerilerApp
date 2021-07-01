@@ -48,7 +48,7 @@ export default function ChatPage() {
         />
       </View>
 
-      <ChatRender />
+      {/* <ChatRender /> */}
      </View>
   );
 }

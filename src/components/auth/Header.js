@@ -19,7 +19,7 @@ export default function HeaderPage() {
     }, [])
   return (
     <View style={styles.auth_header}>
-        <Image resizeMode='center' style={{ width: 50, height: 50 }} source={require('../../../assets/teriler.png')} />
+        <Image resizeMode='contain' style={{ width: 165, height: 159 }} source={require('../../../assets/teriler.png')} />
         
     </View>
   );

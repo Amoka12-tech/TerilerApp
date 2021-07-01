@@ -23,7 +23,7 @@ import TopScroll from './TopScroll';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faHeart } from '@fortawesome/free-solid-svg-icons';
-import { ScreenHeight } from 'react-native-elements/dist/helpers';
+import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers';
 import { SliderBox } from 'react-native-image-slider-box';
 import { Video, AVPlaybackStatus } from 'expo-av';
 import { useRoute, useIsFocused } from '@react-navigation/native';
@@ -155,7 +155,7 @@ export default function MainPage({ navigation, route }) {
                   />
                 </TouchableOpacity>
                 <View style={styles.post_person_name_holder}>
-                  <Text>{item?.postBy?.username}</Text>
+                  <Text style={{ fontWeight: 'bold', fontSize: 18, fontFamily: 'Poppins_600SemiBold', }}>{item?.postBy?.username}</Text>
                   <Text>{moment(item?.createdAt).fromNow()}</Text>
                 </View>
               </View>
@@ -193,19 +193,22 @@ export default function MainPage({ navigation, route }) {
                 }}>
                   <Video 
                     ref={videoRef}
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                    }}
                     source={{ 
                       uri: item?.media[0]
                     }}
+                    style={{
+                      display: 'flex',
+                      width: ScreenWidth,
+                      height: (ScreenWidth * 18) /16,
+                      padding: 0,
+                    }}
                     useNativeControls={true}
-                    resizeMode='contain'
+                    resizeMode={Video.RESIZE_MODE_COVER}
                     isLooping={false}
                     onPlaybackStatusUpdate={status => setVideoStatus(() => status)}
                     status={{ shouldPlay: videoSelectIndex === index ? true : false }}
                   />
+                  
 
                   {/* <TouchableOpacity 
                     onPress={() => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { faArrowLeft, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { View, Text, TouchableOpacity } from 'react-native';
@@ -16,14 +16,18 @@ export default function ProfilePage({ route, navigation }) {
     const dispatch = useDispatch();
     const currentUser = useSelector(state => state.auth.user);
     const getPostData = useSelector(state => state.user);
+    const posts = useSelector(state => state.post);
     const { userData } = route.params;
+
+    const [postLimit, setPostLimit] = useState(5);
     useEffect(() => {
         dispatch(getUser(userData?.user?._id));
         // console.log(userData?.user?._id);
-    }, []);
+    }, [posts]);
+
+    getPostData?.posts?.sort((a, b) => -1);
     
     const postDatas = getPostData;
-    // console.log("Post: ",postDatas?.posts);
 
     const postTopView = () => {
         return <>

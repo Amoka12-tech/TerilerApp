@@ -16,6 +16,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function PostPage({ navigation }) {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth);
   const [hideCameraView, setHideCameraView] = useState('flex');
   const [hidePostView, setHidePostView] = useState('none');
 
@@ -68,7 +69,7 @@ export default function PostPage({ navigation }) {
         const thisMedia = await convertFile(selectedImage[key].uri);
         const thisMediaType = selectedImage[key].mediaType;
         const thisMediaExec = selectedImage[key].filename.split('.').pop();
-        console.log(thisMediaType,'/',thisMediaExec);
+        // console.log(thisMediaType,'/',thisMediaExec);
         mediaArray.push({
           "mediaBinary": thisMedia,
           "ContentType": thisMediaExec,
@@ -200,6 +201,7 @@ export default function PostPage({ navigation }) {
           marginLeft: 20,
         }}>
           <TouchableOpacity 
+            disabled={user?.loading}
             onPress={onSubmit}
             style={styles.next_button}>
             <Text style={styles.next_text}>Post</Text>

@@ -1,17 +1,17 @@
-import { faHeart, faRetweet } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faHeart, faRetweet } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useRef, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { TouchableOpacity, TextInput } from 'react-native';
 import { View, Text, FlatList } from 'react-native';
-import { Avatar,BottomSheet,Image } from 'react-native-elements';
+import { Avatar, BottomSheet, Image, } from 'react-native-elements';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
-import { black, grey, secondary } from '../../../color';
+import { black, grey, primary, secondary, white } from '../../../color';
 import styles from '../../../styles';
 import moment from 'moment';
-import { ScreenHeight } from 'react-native-elements/dist/helpers';
+import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers';
 import { SliderBox } from 'react-native-image-slider-box';
 import { Video, AVPlaybackStatus } from 'expo-av';
-import { deletePost } from '../../../actions/post';
+import { deletePost, likePost } from '../../../actions/post';
 import StoriesPage from './Stories';
 import CarouselPage from './carousel';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,166 +32,209 @@ export default function PostsPage({ postDatas, postTopView }) {
       const flatListRef = useRef();
       const videoRef = useRef();
 
-      const posts = postDatas?.posts?.map((post) => post);
+      const [postLimit, setPostLimit] = useState(0);
+
+      const postsArray = postDatas?.posts;
+      const inputRef = useRef();
+
     
   const _renderData = ({item, index}) => {
     return(
       <View 
-        key={index}
-        style={styles.post_holder}
-        >
-        
-        {/* Image Name Post time */}
-        <View style={styles.post_person_holder}>
-          <View style={styles.post_person_details}>
-            <Avatar 
-              source={postDatas?.photo  ? { uri: postDatas?.photo } : require('../../../img/stories/stories4.png')}
-              size={50}
-              rounded
-              containerStyle={{
-                marginRight: 12,
-              }}
-            />
-            <View style={styles.post_person_name_holder}>
-              <Text>{postDatas?.username}</Text>
-              <Text>{moment(item?.createdAt).fromNow()}</Text>
-            </View>
-          </View>
-
-
-          <TouchableOpacity
-            onPress={() => {
-              setSelectPostID(item?._id);
-              setSelectPostByID(item?.postBy);
-              setBsIsVisible(!bsIsVisible);
-            }}
-          >
-            <Icon
-                type='material-community'
-                name='dots-vertical'
-                size={25}
-                color={grey}
-              />
-          </TouchableOpacity>
-          
-        </View>
-
-        <View style={styles.post_body_holder}>
-          <Text>
-            {item?.caption}
-          </Text>
-          {
-            item.media[0].split(".").pop() === 'mp4' ? 
+            key={index}
+            style={styles.post_holder}
+            >
             
-            <View style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-            }}>
-              <Video 
-                ref={videoRef}
-                style={styles.post_video}
-                source={{ 
-                  uri: item?.media[0]
-                }}
-                useNativeControls={false}
-                resizeMode='contain'
-                isLooping={false}
-                onPlaybackStatusUpdate={status => setVideoStatus(() => status)}
-                status={{ shouldPlay: videoSelectIndex === index ? true : false }}
-              />
-
-              <TouchableOpacity 
+            {/* Image Name Post time */}
+            <View style={styles.post_person_holder}>
+              <View style={styles.post_person_details}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Profile', { userData: postDatas })}
+                >
+                  <Avatar 
+                    source={ 
+                        postDatas?.photo ? { uri: postDatas?.photo } : require('../../../img/stories/stories4.png') 
+                      }
+                    size={50}
+                    rounded
+                    containerStyle={{
+                      marginRight: 12,
+                    }}
+                  />
+                </TouchableOpacity>
+                <View style={styles.post_person_name_holder}>
+                  <Text style={{ fontWeight: 'bold', fontSize: 18, fontFamily: 'Poppins_600SemiBold', }}>{postDatas?.username}</Text>
+                  <Text>{moment(item?.createdAt).fromNow()}</Text>
+                </View>
+              </View>
+  
+  
+              <TouchableOpacity
                 onPress={() => {
-                  if(videoSelectIndex === index){
-                    setVideoSelectIndex(null);
-                  }else{
-                    setVideoSelectIndex(index);
+                  setSelectPostID(item?._id);
+                  setSelectPostByID(postDatas?._id);
+                  setBsIsVisible(!bsIsVisible);
+                }}
+              >
+                <Icon
+                    type='material-community'
+                    name='dots-vertical'
+                    size={25}
+                    color={grey}
+                  />
+              </TouchableOpacity>
+              
+            </View>
+  
+            <View style={styles.post_body_holder}>
+              <Text>
+                {item?.caption}
+              </Text>
+              {
+                item.media[0].split(".").pop() === 'mp4' ? 
+                
+                <View style={{
+                  flex: 1,
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                  <Video 
+                    ref={videoRef}
+                    source={{ 
+                      uri: item?.media[0]
+                    }}
+                    style={{
+                      display: 'flex',
+                      width: ScreenWidth,
+                      height: (ScreenWidth * 21) /16,
+                      padding: 0,
+                    }}
+                    useNativeControls={true}
+                    resizeMode={Video.RESIZE_MODE_COVER}
+                    isLooping={false}
+                    onPlaybackStatusUpdate={status => setVideoStatus(() => status)}
+                    status={{ shouldPlay: videoSelectIndex === index ? true : false }}
+                  />
+                  
+
+                  {/* <TouchableOpacity 
+                    onPress={() => {
+                      if(videoSelectIndex === index){
+                        setVideoSelectIndex(null);
+                      }else{
+                        setVideoSelectIndex(index);
+                      }
+                    }}
+                    style={styles.post_video_icon}>
+                    {
+                      videoSelectIndex !== index && 
+                      
+                        <Icon 
+                          type='font-awesome'
+                          name='play'
+                          size={25}
+                          color={secondary}
+                        />
+                    }
+                  </TouchableOpacity> */}
+
+                </View>
+                
+                : 
+                <SliderBox 
+                  images={item?.media}
+                />
+              }
+            </View>
+  
+            <View style={styles.post_actions_holder}>
+              <View style={styles.post_actions_left}>
+                <FontAwesomeIcon 
+                  icon={faEye}
+                  size={20}
+                  color={grey}
+                />
+                <Text style={styles.post_actions_text}>
+                  {item?.postViewBy?.length} Views
+                </Text>
+              </View>
+              <View style={styles.post_actions_right}>
+                <TouchableOpacity 
+                  onPress={() => dispatch(likePost(item?._id))}
+                  style={styles.post_actions_right_item}>
+                  <FontAwesomeIcon 
+                    icon={faHeart}
+                    size={20}
+                    color={secondary}
+                  />
+                  <Text style={styles.post_actions_text, {color: secondary, marginLeft: 5}}>
+                    {item?.postLikeBy?.length} 
+                  </Text>
+                </TouchableOpacity>
+  
+                <TouchableOpacity style={styles.post_actions_right_item}>
+                  <Icon 
+                    type='evilicon'
+                    name='retweet'
+                    size={25}
+                    color={grey}
+                  />
+                  <Text style={styles.post_actions_text}>
+                    {item?.repostBy?.length}
+                  </Text>
+                </TouchableOpacity>
+  
+                <TouchableOpacity style={styles.post_actions_right_item}>
+                  <Icon 
+                    type='ionicon'
+                    name='chatbubble-outline'
+                    containerStyle={{
+                      transform: [{scaleX: -1}]
+                    }}
+                    size={20}
+                    color={grey}
+                  />
+                  <Text style={styles.post_actions_text}>
+                    {item?.comments?.length}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            
+            <View style={{ display: 'flex', width: '100%', marginTop: 5 }}>
+              <TextInput 
+                ref={inputRef}
+                placeholder='Message' 
+                style={styles.comment_box} 
+                placeholderTextColor={primary}
+                returnKeyType='send'
+                onSubmitEditing={(e) => console.log(e.nativeEvent.text)}
+                onKeyPress={(e) => {
+                  if(e.nativeEvent.key == 'Enter'){
+                      console.log('here');
                   }
                 }}
-                style={styles.post_video_icon}>
-                {
-                  videoSelectIndex !== index && 
-                  
-                    <Icon 
-                      type='font-awesome'
-                      name='play'
-                      size={25}
-                      color={secondary}
-                    />
-                }
-              </TouchableOpacity>
-
+                />
             </View>
-            
-            : 
-            <SliderBox 
-              images={item?.media}
-            />
-          }
         </View>
-
-        <View style={styles.post_actions_holder}>
-          <View style={styles.post_actions_left}>
-            <Text style={styles.post_actions_text}>
-              {item?.postViewBy?.length} Views
-            </Text>
-          </View>
-          <View style={styles.post_actions_right}>
-            <TouchableOpacity style={styles.post_actions_right_item}>
-              <FontAwesomeIcon 
-                icon={faHeart}
-                size={20}
-                color={secondary}
-              />
-              <Text style={styles.post_actions_text, {color: secondary}}>
-                0 Likes
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.post_actions_right_item}>
-              <Icon 
-                type='entypo'
-                name='retweet'
-                size={25}
-                color={grey}
-              />
-              <Text style={styles.post_actions_text}>
-                {item?.repostBy?.length} Repost
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.post_actions_right_item}>
-              <Icon 
-                type='fontisto'
-                name='comment'
-                size={20}
-                color={grey}
-              />
-              <Text style={styles.post_actions_text}>
-                {item?.comments?.length} Comments
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-    </View>
     );
 }
 // End of render View for post inside homw  
 
 
   return (
-    <View style={styles.container}>
-          {postDatas?.posts !== 'undefined' && <FlatList 
+    <View style={{ flex: 1, backgroundColor: white }}>
+          {postsArray !== 'undefined' && <FlatList 
             style={{
               flex: 1,
             }}
             ListHeaderComponent={postTopView}
             ref={flatListRef}
-            data={postDatas.posts !== 'undefined' ? postDatas?.posts : []}
+            data={postsArray !== 'undefined' ? postsArray : []}
             renderItem={_renderData}
             keyExtractor={(item, index) => index.toString()}
-            pagingEnabled
+            initialNumToRender={5}
             showsVerticalScrollIndicator={false}
           />}
 
