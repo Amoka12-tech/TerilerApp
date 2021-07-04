@@ -19,7 +19,6 @@ export default function TalentPage({ navigation }) {
 
   useEffect(() => {
     dispatch(getAllUser());
-    console.log("Talents: ",talents);
   }, []);
 
   const render_talent = ({item, index}) => {

@@ -35,6 +35,23 @@ export const loadMorePost = (postSkip, setPostSkip, postLimit, setPostLimit, set
     }
 };
 
+//get initial all posts with initial limits
+export const refreshAllPost = (postSkip, setPostSkip, postLimit, setPostLimit, setIsRefreshing) => async (dispatch) => {
+    try {
+        setIsRefreshing(true);
+        const { data } = await api.getAllPost(postSkip, postLimit);
+        dispatch({type: GET_ALL_POST, payload: data.payload});
+        setPostSkip(postLimit);
+        setPostLimit(postLimit*2);
+        setIsRefreshing(false);
+    } catch (error) {
+        if(error.response){
+            console.log("Get Post Error: ", error.response.data.payload);
+        }
+        setIsRefreshing(false);
+    }
+};
+
 export const createPost = (body, navigation, configProgress, setIsProgress) => async (dispatch) => {
     
     setIsProgress(true);

@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
-import { updateProfilePicture, updateUserProfile } from '../../../actions/user';
+import { logout, updateProfilePicture, updateUserProfile } from '../../../actions/user';
 import getLocation from '../../../actions/others';
 import { Picker } from 'react-native';
 
@@ -131,6 +131,10 @@ export default function ProfileEditPage({ navigation }) {
                         Edit Profile
                     </Text>
                 </View>
+
+                <TouchableOpacity onPress={() => dispatch(logout())}>
+                    <Text style={styles.top_nav_right_title}>Log Out</Text>
+                </TouchableOpacity>
                 
             </View>
             <ScrollView 

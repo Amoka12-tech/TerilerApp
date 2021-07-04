@@ -32,6 +32,8 @@ export default function RegisterPage({ navigation }) {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
       if(!!userData){
           navigation.navigate('Login');

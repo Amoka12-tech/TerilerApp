@@ -1,13 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { FlatList } from 'react-native';
-import { TouchableOpacity } from 'react-native';
-import { View, Text, ScrollView } from 'react-native';
+import { 
+          FlatList, 
+          TextInput,
+          TouchableOpacity,
+          View, 
+          Text, 
+          ScrollView, 
+          ActivityIndicator,
+          RefreshControl
+         } from 'react-native';
 import { Avatar, Icon, Image, Tooltip, BottomSheet } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
-import { deletePost, getAllPost, likePost, loadMorePost } from '../../actions/post';
+import { deletePost, getAllPost, likePost, loadMorePost, refreshAllPost } from '../../actions/post';
 import { logout } from '../../actions/user';
-import { black, grey, overlayColor, secondary, white } from '../../color';
+import { black, grey, overlayColor, primary, secondary, white } from '../../color';
 import styles from '../../styles';
 import HeadNav from './Header';
 import CarouselPage from './parts/carousel';
@@ -117,6 +124,7 @@ export default function MainPage({ navigation, route }) {
       const [postLimit, setPostLimit] = useState(5);
       const [postLoad, setPostLoad] = useState(false);
       const [loadingMore, setLoadingMore] = useState(false);
+      const [isRefreshing, setIsRefreshing] = useState(false);
 
       useEffect(() => {
         if(postLoad === false){
@@ -127,10 +135,13 @@ export default function MainPage({ navigation, route }) {
         }
       }, []);
 
-      const loadMore = () => {
-        console.log(postSkip, postLimit);
-        dispatch(loadMorePost(postSkip, setPostSkip, postLimit, setPostLimit, setLoadingMore));
-      };
+      const onRefresh = React.useCallback(() => {
+        const skip = 0;
+        const limit = 5;
+        if(!isRefreshing){
+          dispatch(refreshAllPost(skip, setPostSkip, limit, setPostLimit, setIsRefreshing));
+        }
+      });
 
       const _renderData = ({item, index}) => {
         return(
@@ -199,18 +210,17 @@ export default function MainPage({ navigation, route }) {
                     style={{
                       display: 'flex',
                       width: ScreenWidth,
-                      height: (ScreenWidth * 18) /16,
+                      height: ScreenWidth,
                       padding: 0,
                     }}
-                    useNativeControls={true}
-                    resizeMode={Video.RESIZE_MODE_COVER}
+                    resizeMode={Video.RESIZE_MODE_CONTAIN}
                     isLooping={false}
                     onPlaybackStatusUpdate={status => setVideoStatus(() => status)}
                     status={{ shouldPlay: videoSelectIndex === index ? true : false }}
                   />
                   
 
-                  {/* <TouchableOpacity 
+                  <TouchableOpacity 
                     onPress={() => {
                       if(videoSelectIndex === index){
                         setVideoSelectIndex(null);
@@ -223,13 +233,13 @@ export default function MainPage({ navigation, route }) {
                       videoSelectIndex !== index && 
                       
                         <Icon 
-                          type='font-awesome'
+                          type='antdesign'
                           name='play'
-                          size={25}
+                          size={45}
                           color={secondary}
                         />
                     }
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
 
                 </View>
                 
@@ -293,6 +303,21 @@ export default function MainPage({ navigation, route }) {
                 </TouchableOpacity>
               </View>
             </View>
+            
+            <View style={{ display: 'flex', width: '100%', marginTop: 5 }}>
+              <TextInput 
+                placeholder='Message' 
+                style={styles.comment_box} 
+                placeholderTextColor={primary}
+                returnKeyType='send'
+                onSubmitEditing={(e) => console.log(e.nativeEvent.text)}
+                onKeyPress={(e) => {
+                  if(e.nativeEvent.key == 'Enter'){
+                      console.log('here');
+                  }
+                }}
+                />
+            </View>
         </View>
         );
     }
@@ -308,7 +333,18 @@ export default function MainPage({ navigation, route }) {
             ref={flatListRef}
             data={postInfo}
             renderItem={_renderData}
-            onScrollEndDrag={() => {
+            refreshControl={
+              <RefreshControl 
+                refreshing={isRefreshing}
+                onRefresh={onRefresh}
+                tintColor={secondary}
+                colors={[secondary]}
+                title="Pull to refresh"
+                titleColor={secondary}
+              />
+            }
+            onEndReachedThreshold={0.5}
+            onEndReached={() => {
               if(loadingMore === false && postInfo.length > 0){
                 dispatch(loadMorePost(postSkip, setPostSkip, postLimit, setPostLimit, setLoadingMore));
               }
@@ -322,7 +358,9 @@ export default function MainPage({ navigation, route }) {
                   <SliderBox 
                     images={items.map(e => e.image)}
                     ImageComponentStyle={{
-                      height: 80,
+                      height: 80, 
+                      borderColor: secondary, 
+                      borderWidth: 5
                     }}
                   />
 
@@ -336,17 +374,11 @@ export default function MainPage({ navigation, route }) {
             ListFooterComponent={() => {
               return (
                 postLoad !== false ? <View style={styles.load_more_holder}>
-                  <TouchableOpacity 
-                    disabled={loadingMore}
-                    style={styles.load_more_touchable}>
-                    {loadingMore ? <Text style={styles.load_more_text}>
-                      Loading...
-                    </Text> : 
-                    <Text style={styles.load_more_text}>
-                      Load More
-                    </Text>
+                  <View>
+                    {loadingMore ? <ActivityIndicator size="large" color={secondary} /> : 
+                    <ActivityIndicator size="large" color={secondary} />
                     }
-                  </TouchableOpacity>
+                  </View>
                 </View>
                 : <View />
               );

@@ -32,6 +32,14 @@ export default StyleSheet.create({
         marginLeft: 10,
     },
 
+    top_nav_right_title: {
+        fontFamily: 'Poppins_500Medium',
+        fontSize: 16,
+        fontWeight: '500',
+        fontStyle: 'normal',
+        color: secondary,
+    },
+
     top_nav_right_holder: {
         display: 'flex',
         flexDirection: 'row',

@@ -66,8 +66,8 @@ export default function App() {
             <SafeAreaProvider>
               <Spinner
                 visible={loading}
-                textContent={'Loading...'}
                 textStyle={{ color: secondary }}
+                color={secondary}
               />
               <Stack.Navigator screenOptions={{ headerShown: false }} >
                   {Object.entries({

@@ -107,18 +107,17 @@ export default function PostsPage({ postDatas, postTopView }) {
                     style={{
                       display: 'flex',
                       width: ScreenWidth,
-                      height: (ScreenWidth * 21) /16,
+                      minHeight: ScreenWidth,
                       padding: 0,
                     }}
-                    useNativeControls={true}
-                    resizeMode={Video.RESIZE_MODE_COVER}
+                    resizeMode={Video.RESIZE_MODE_CONTAIN}
                     isLooping={false}
                     onPlaybackStatusUpdate={status => setVideoStatus(() => status)}
                     status={{ shouldPlay: videoSelectIndex === index ? true : false }}
                   />
                   
 
-                  {/* <TouchableOpacity 
+                  <TouchableOpacity 
                     onPress={() => {
                       if(videoSelectIndex === index){
                         setVideoSelectIndex(null);
@@ -131,13 +130,13 @@ export default function PostsPage({ postDatas, postTopView }) {
                       videoSelectIndex !== index && 
                       
                         <Icon 
-                          type='font-awesome'
+                          type='antdesign'
                           name='play'
-                          size={25}
+                          size={45}
                           color={secondary}
                         />
                     }
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
 
                 </View>
                 

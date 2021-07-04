@@ -114,6 +114,7 @@ export default StyleSheet.create({
     auth_Button: {
         width: '100%',
         backgroundColor: secondary,
+        tintColor: white,
         borderRadius: 10,
         height: 60,
         marginBottom: 60,
@@ -183,6 +184,10 @@ export default StyleSheet.create({
         textAlign: 'center',
         marginTop: -10,
         color: secondary,
+    },
+
+    auth_Button_Loader: {
+        color: secondary
     },
 
     stories_scroll_holder: {
@@ -342,7 +347,7 @@ export default StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         width: '100%',
-        height: 220,
+        height: ScreenWidth,
         top: 0,
         position: 'absolute',
         backgroundColor: 'transparent',
