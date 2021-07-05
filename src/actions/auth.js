@@ -30,6 +30,7 @@ export const register = (body) => async dispatch => {
     }
 };
 
+//Login User
 export const login = (email, password) => async dispatch => {
     const body = {
         username_email: email,
@@ -49,6 +50,42 @@ export const login = (email, password) => async dispatch => {
             dispatch({ type: END_PROCESS });
             alert(error.response.data.payload);
         }
+    }
+};
+
+//Google OAuth Register/Login User
+export const googleOAuth = () => async dispatch => {
+    try {
+        dispatch({type: START_PROCESS});
+        const { data } = await api.googleOAuth();
+        console.log(data);
+        // const jsonData = JSON.stringify(data.payload);
+        // await AsyncStorage.setItem('@user', jsonData);
+        // dispatch({ type: SIGNIN_USER, payload: data.payload });
+        dispatch({type: END_PROCESS});
+    } catch (error) {
+        if(error.response.data){
+            console(error.response.data.payload)
+        }
+        dispatch({type: END_PROCESS});
+    }
+};
+
+//Facebook OAuth Register/Login User
+export const facebookOAuth = () => async dispatch => {
+    try {
+        dispatch({type: START_PROCESS});
+        const { data } = await api.facebookOAuth();
+        console.log(data);
+        // const jsonData = JSON.stringify(data.payload);
+        // await AsyncStorage.setItem('@user', jsonData);
+        // dispatch({ type: SIGNIN_USER, payload: data.payload });
+        dispatch({type: END_PROCESS});
+    } catch (error) {
+        if(error.response.data){
+            console(error.response.data.payload)
+        }
+        dispatch({type: END_PROCESS});
     }
 };
 

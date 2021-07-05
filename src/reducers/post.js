@@ -17,7 +17,7 @@ export default function(post = [], action){
             return newPostArray;
 
         case LOAD_MORE_POST:
-            return [...post.concat(payload)]
+            return post.concat(payload);
 
         case DELETE_POST:
             return post.filter((item) =>  item._id !== payload);

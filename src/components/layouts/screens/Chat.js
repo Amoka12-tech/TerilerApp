@@ -2,34 +2,38 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { View, Text } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
-import { secondary } from '../../../color';
+import { black, secondary } from '../../../color';
 import styles from './styles';
 
-export default function ChatPage() {
+export default function ChatPage({ navigation }) {
   const ChatRender = () => {
     return(
-      <TouchableOpacity style={styles.chatMessageHolder}>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('SingleChat')}
+        style={styles.chatMessageHolder}>
         <Avatar 
           source={require('../../../img/blank_image.png')}
-          size={50}
+          size={70}
           rounded
         />
         <View style={styles.chatBodyPreviewHolder}>
           <View style={styles.chatBodyPreviewTitle}>
-            <Text>
+            <Text style={styles.chatNameText}>
               Michael Daniel 
             </Text>
-            <Text>
+            <Text style={styles.chatTimeText}>
               30 mins
             </Text>
           </View>
           <View style={styles.chatBodyPreviewTextHolder}>
-            <Text>
+            <Text style={styles.chatMessageText}>
             Can you pls how me mail a letter to your school?..... I tried reaching you...
             </Text>
-            <Text style={styles.messageNumberText}>
-              2
-            </Text>
+            <View style={styles.messageNumberTextHolder}>
+              <Text style={styles.messageNumberText}>
+                2
+              </Text>
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -38,17 +42,17 @@ export default function ChatPage() {
   return (
     <View style={styles.chat_container}>
       <View style={styles.top_nav_holder}>
-        <Text style={styles.top_text}>Chat</Text>
+        <Text style={styles.top_text}>Chats</Text>
 
         <Icon 
           type='ionicon'
           name='search-outline'
           size={25}
-          color={secondary}
+          color={black}
         />
       </View>
 
-      {/* <ChatRender /> */}
+      <ChatRender />
      </View>
   );
 }

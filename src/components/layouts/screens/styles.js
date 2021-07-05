@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { black, secondary, white } from "../../../color";
+import { black, grey, overlayColor, primary, rgaColor, secondary, white } from "../../../color";
 
 export default StyleSheet.create({
     container: {
@@ -328,19 +328,22 @@ export default StyleSheet.create({
     chat_container: {
         flex: 1,
         padding: 10,
+        backgroundColor: white,
     },
 
     chatMessageHolder: {
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     chatBodyPreviewHolder: {
         display: 'flex',
         flexDirection: 'column',
         marginLeft: 15,
-        width: '80%'
+        width: '75%'
     },
 
     chatBodyPreviewTitle: {
@@ -355,16 +358,141 @@ export default StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 4,
+        width: '100%'
     },
 
     messageNumberText: {
         display: 'flex',
+        textAlign: 'center',
         color: white,
-        backgroundColor: secondary,
+        fontFamily: 'Poppins_500Medium',
+        fontSize: 14
+    },
+
+    messageNumberTextHolder: {
+        display: 'flex',
+        backgroundColor: primary,
         height: 18,
-        width: 9,
-        borderRadius: 2,
+        padding: 5,
+        borderRadius: 6,
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+
+    chatNameText: {
+        fontFamily: 'Poppins_500Medium',
+        fontWeight: '500',
+        fontStyle: 'normal',
+        fontSize: 14,
+    },
+
+    chatTimeText: {
+        fontFamily: 'Poppins_500Medium',
+        fontWeight: '500',
+        fontStyle: 'normal',
+        fontSize: 12,
+        color: grey,
+    },
+
+    chatMessageText: {
+        fontFamily: 'Poppins_400Regular',
+        fontWeight: '400',
+        fontSize: 12,
+        fontStyle: 'normal',
+        color: grey,
+        width: '85%'
+    },
+
+    topChatHolder: {
+        display: 'flex',
+        width: '100%',
+        marginTop: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    chatPersonHolder: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+
+    chatPersonName: {
+        fontFamily: 'Poppins_600SemiBold',
+        fontWeight: '600',
+        fontStyle: 'normal',
+        fontSize: 16,
+        marginBottom: 2,
+    },
+
+    chatPersonTime: {
+        fontFamily: 'Poppins_600SemiBold',
+        fontWeight: '600',
+        fontStyle: 'normal',
+        fontSize: 12,
+    },
+
+    currentUserViewMessage: {
+        display: 'flex',
+        maxWidth: 275,
+        backgroundColor: primary,
+        borderTopLeftRadius: 33,
+        borderBottomLeftRadius: 33,
+        borderTopRightRadius: 33,
+        borderBottomRightRadius: 0,
+        padding: 15,
+    },
+
+    otherUserViewMessage: {
+        display: 'flex',
+        maxWidth: 275,
+        backgroundColor: 'rgba(93, 61, 206, 0.06)',
+        borderTopLeftRadius: 33,
+        borderBottomLeftRadius: 0,
+        borderTopRightRadius: 33,
+        borderBottomRightRadius: 33,
+        padding: 15,
+    },
+
+    currentUserMessageText: {
+        fontFamily: 'Poppins_400Regular',
+        fontWeight: '400',
+        fontSize: 12,
+        fontStyle: 'normal',
+        color: white,
+    },
+
+    otherUserMessageText: {
+        fontFamily: 'Poppins_400Regular',
+        fontWeight: '400',
+        fontSize: 12,
+        fontStyle: 'normal',
+        color: primary,
+    },
+
+    messageTimeText: {
+        fontFamily: 'Poppins_500Medium',
+        fontWeight: '500',
+        fontStyle: 'normal',
+        fontSize: 10,
+    },
+
+    chatInput: {
+        width: '100%',
+        height: 51,
+        borderRadius: 33,
+        backgroundColor: rgaColor,
+        paddingLeft: 48,
+    },
+
+    roundMicHolder: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 5,
+        width: 32,
+        height: 32,
+        borderRadius: 50,
+        backgroundColor: secondary,
+        marginLeft: '-98%',
+    },
 });

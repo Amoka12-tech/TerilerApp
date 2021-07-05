@@ -17,6 +17,7 @@ import GalleryPage from '../layouts/screens/post/Gallery';
 import FullGalleryPage from '../layouts/screens/post/FullGallery';
 import { useRoute } from '@react-navigation/native';
 import AlbumGalleryPage from '../layouts/screens/post/AlbumGallery';
+import SingleChatPage from '../layouts/screens/SingleChat';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,6 +49,19 @@ const PostStackScreen = () => {
                 component = {AlbumGalleryPage}
              />
          </PostStack.Navigator>
+    );
+};
+
+const ChatStack = createStackNavigator();
+
+const ChatScreen = () => {
+    return (
+        <ChatStack.Navigator mode="modal" screenOptions={{ 
+            headerShown: false
+         }}>
+            <ChatStack.Screen name='ChatMain' component={ChatPage} />
+            <ChatStack.Screen name='SingleChat' component={SingleChatPage} />
+        </ChatStack.Navigator>
     );
 };
 
@@ -145,7 +159,7 @@ export default function MainTabs() {
 
 <Tab.Screen 
             name='Chat'
-            component={ChatPage}
+            component={ChatScreen}
             options={{
                 tabBarIcon: ({ focused }) => (
                     <View
