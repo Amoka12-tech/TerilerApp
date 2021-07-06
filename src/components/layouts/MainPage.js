@@ -34,6 +34,7 @@ import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers';
 import { SliderBox } from 'react-native-image-slider-box';
 import { Video, AVPlaybackStatus } from 'expo-av';
 import { useRoute, useIsFocused } from '@react-navigation/native';
+import { createComment } from '../../actions/comment';
 
 export default function MainPage({ navigation, route }) {
 
@@ -134,6 +135,13 @@ export default function MainPage({ navigation, route }) {
           }, 3000);
         }
       }, []);
+
+      const postComment =(id, text) => {
+        const body = {
+          text: text,
+        };
+        dispatch(createComment(id, body));
+      }
 
       const onRefresh = React.useCallback(() => {
         const skip = 0;
@@ -310,11 +318,9 @@ export default function MainPage({ navigation, route }) {
                 style={styles.comment_box} 
                 placeholderTextColor={primary}
                 returnKeyType='send'
-                onSubmitEditing={(e) => console.log(e.nativeEvent.text)}
-                onKeyPress={(e) => {
-                  if(e.nativeEvent.key == 'Enter'){
-                      console.log('here');
-                  }
+                onSubmitEditing={(e) => {
+                  const message = e.nativeEvent.text;
+                  postComment(item?._id, message);
                 }}
                 />
             </View>
@@ -433,11 +439,14 @@ export default function MainPage({ navigation, route }) {
                 }
 
                 <TouchableOpacity 
-                  onPress={() => console.log('Another action')}
+                  onPress={() => navigation.navigate('Chat', {
+                    screen: user?.user?._id === selectPostByID ? '' : 'SingleChat',
+                    id: selectPostByID,
+                  })}
                   style={styles.post_bs_view_touch}>
                   <Icon 
-                    type='feather'
-                    name='activity'
+                    type='ionicon'
+                    name='chatbubble-outline'
                     size={30}
                     color={black}
                   />
@@ -445,10 +454,10 @@ export default function MainPage({ navigation, route }) {
                     style={styles.post_bs_view_details}>
                     <Text 
                       style={styles.post_bs_view_details_text}>
-                      Another Action
+                      Chat
                     </Text>
                     <Text style={styles.post_bs_view_details_text_span}>
-                      This function take another action
+                      This function allow you to chat with user
                     </Text>
                   </View>
                 </TouchableOpacity>

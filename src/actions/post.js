@@ -1,5 +1,5 @@
 import * as api from '../api/post';
-import { CREATE_POST, DELETE_POST, END_PROCESS, GET_ALL_POST, LOAD_MORE_POST, REMOVE_ALL_MEDIA, START_PROCESS, UPDATE_POST } from '../reducers/types';
+import { CREATE_POST, DELETE_POST, END_PROCESS, GET_ALL_POST, GET_POST, LOAD_MORE_POST, REMOVE_ALL_MEDIA, START_PROCESS, UPDATE_POST } from '../reducers/types';
 
 const config = {
     onUploadProgress: progressEvent => console.log(progressEvent.loaded),
@@ -16,6 +16,20 @@ export const getAllPost = (postSkip, setPostSkip, postLimit, setPostLimit) => as
         if(error.response){
             console.log("Get Post Error: ", error.response.data.payload);
         }
+    }
+};
+
+export const getPost = (id) => async dispatch => {
+    try {
+        dispatch({type: START_PROCESS});
+        const { data } = await api.getPost(id);
+        dispatch({type: GET_POST, payload: data.payload});
+        dispatch({type: END_PROCESS});
+    } catch (error) {
+        if(error.response.data){
+            alert(error.response.data.payload);
+        }
+        dispatch({type: END_PROCESS});
     }
 };
 

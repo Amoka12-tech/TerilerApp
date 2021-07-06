@@ -1,4 +1,4 @@
-import { CREATE_POST, DELETE_POST, GET_ALL_POST, LOAD_MORE_POST, UPDATE_POST } from "./types";
+import { CREATE_POST, DELETE_POST, GET_ALL_POST, GET_POST, LOAD_MORE_POST, UPDATE_POST } from "./types";
 
 export default function(post = [], action){
     const {type, payload} = action;
@@ -8,6 +8,9 @@ export default function(post = [], action){
             return [...post, payload].sort((a, b) => -1);
 
         case GET_ALL_POST:
+            return payload;
+
+        case GET_POST:
             return payload;
 
         case UPDATE_POST:
