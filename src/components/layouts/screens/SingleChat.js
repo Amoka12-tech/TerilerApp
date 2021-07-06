@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TouchableOpacity, View, Text, FlatList, TextInput } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
+import { createChat, getSingleChat } from '../../../actions/chat';
 import { black, primary, secondary, white } from '../../../color';
 import styles from './styles';
 
-export default function SingleChatPage({ navigation }) {
+export default function SingleChatPage({ navigation, route }) {
+    const receiverID = route?.params?.id;
     const userID = 1;
+    const dispatch = useDispatch();
+    const chats = useSelector(state => state.chat);
+
+    useEffect(() => {
+        dispatch(getSingleChat(receiverID));
+    }, []);
+
+    const postChat = (message) => {
+        const body = {
+            text: message,
+        };
+        dispatch(createChat(receiverID, body));
+    };
     const chatMessages = [
         {
             id: 1,
@@ -113,6 +129,9 @@ export default function SingleChatPage({ navigation }) {
             style={styles.chatInput}
             placeholder='Message..'
             placeholderTextColor={primary}
+            returnKeyType='send'
+            returnKeyLabel='Send'
+            onSubmitEditing={(e) => postChat(e.nativeEvent.text)}
             />
           <View style={styles.roundMicHolder}>
               <Icon 

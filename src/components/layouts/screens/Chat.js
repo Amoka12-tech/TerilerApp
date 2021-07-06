@@ -2,17 +2,23 @@ import React, { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { View, Text } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getChats } from '../../../actions/chat';
 import { black, secondary } from '../../../color';
 import styles from './styles';
 
 export default function ChatPage({ navigation, route }) {
+  const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
   const screen = route.params?.screen;
   const id = route.params?.id;
+  
+  const chats = useSelector(state => state.chat);
   useEffect(() => {
     if( screen !== undefined || ''){
       navigation.navigate(screen, { id: id });
+    }else{
+      dispatch(getChats());
     }
   }, []);
   const ChatRender = () => {

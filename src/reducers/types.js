@@ -25,3 +25,7 @@ export const NEW_COMMENT = 'NEW_COMMENT';
 export const GET_COMMENTS = 'GET_COMMENTS';
 export const UPDATE_COMMENTS = 'UPDATE_COMMENTS';
 export const DELETE_COMMENTS = 'DELETE_COMMENTS';
+
+export const CREATE_CHAT = 'CREATE_CHAT';
+export const GET_CHAT = 'GET_CHAT';
+export const GET_ALL_CHATS = 'GET_ALL_CHATS';
