@@ -6,7 +6,6 @@ export const createComment = (id, body) => async dispatch => {
     try {
         dispatch({type: START_PROCESS});
         const { data } = await api.createComment(id, body);
-        console.log("New Comment: ",data.payload.updatePost);
         dispatch({type: UPDATE_POST, payload: data.payload.updatePost});
         dispatch({type: END_PROCESS});
     } catch (error) {

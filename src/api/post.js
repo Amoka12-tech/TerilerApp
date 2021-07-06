@@ -11,3 +11,5 @@ export const getPost = (id) => API.get(`/api/post/${id}`);
 export const deletePost = (id) => API.delete(`/api/post/delete/${id}`);
 
 export const likePost = (id) => API.put(`/api/post/like/${id}`);
+
+export const rePost = (id) => API.post(`/api/post/repost/${id}`);

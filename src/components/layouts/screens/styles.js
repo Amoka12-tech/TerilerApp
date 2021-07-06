@@ -495,4 +495,22 @@ export default StyleSheet.create({
         backgroundColor: secondary,
         marginLeft: '-98%',
     },
+
+    comment_box: {
+        width: '100%',
+        minHeight: 50,
+        backgroundColor: 'rgba(93, 61, 206, 0.06)',
+        borderRadius: 33,
+        paddingLeft: 20,
+        paddingRight: 30,
+        paddingTop: 5,
+    },
+
+    plainText: {
+        fontFamily: 'Poppins_400Regular',
+        fontStyle: 'normal',
+        fontWeight: '400',
+        fontSize: 10,
+        marginBottom: 5,
+    },
 });

@@ -12,7 +12,7 @@ import {
          } from 'react-native';
 import { Avatar, Icon, Image, Tooltip, BottomSheet } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
-import { deletePost, getAllPost, likePost, loadMorePost, refreshAllPost } from '../../actions/post';
+import { deletePost, getAllPost, likePost, loadMorePost, refreshAllPost, rePost } from '../../actions/post';
 import { logout } from '../../actions/user';
 import { black, grey, overlayColor, primary, secondary, white } from '../../color';
 import styles from '../../styles';
@@ -35,6 +35,7 @@ import { SliderBox } from 'react-native-image-slider-box';
 import { Video, AVPlaybackStatus } from 'expo-av';
 import { useRoute, useIsFocused } from '@react-navigation/native';
 import { createComment } from '../../actions/comment';
+import SinglePostPage from './screens/SinglePost';
 
 export default function MainPage({ navigation, route }) {
 
@@ -120,6 +121,7 @@ export default function MainPage({ navigation, route }) {
 
       const flatListRef = useRef();
       const videoRef = useRef();
+      const inputRef = useRef();
 
       const [postSkip, setPostSkip] = useState(0);
       const [postLimit, setPostLimit] = useState(5);
@@ -136,12 +138,13 @@ export default function MainPage({ navigation, route }) {
         }
       }, []);
 
-      const postComment =(id, text) => {
+      const postComment =(item, text, ref) => {
         const body = {
           text: text,
         };
-        dispatch(createComment(id, body));
-      }
+        ref.current.clear();
+        dispatch(createComment(item._id, body));
+      };
 
       const onRefresh = React.useCallback(() => {
         const skip = 0;
@@ -165,7 +168,7 @@ export default function MainPage({ navigation, route }) {
                   onPress={() => navigation.navigate('Profile', { userData: { user: item?.postBy} })}
                 >
                   <Avatar 
-                    source={item?.postBy?.photo ? { uri: item?.postBy?.photo } : require('../../img/stories/stories4.png')}
+                    source={item?.postBy?.photo ? { uri: item?.postBy?.photo } : require('../../img/blank_image.png')}
                     size={50}
                     rounded
                     containerStyle={{
@@ -196,6 +199,28 @@ export default function MainPage({ navigation, route }) {
               </TouchableOpacity>
               
             </View>
+
+            {!!item?.originalAuthor && <View style={styles.post_person_holder, { marginBottom: 5 }}>
+              <View style={styles.post_person_details}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Profile', { userData: { user: item?.postBy} })}
+                >
+                  <Avatar 
+                    source={item?.originalAuthor?.photo ? { uri: item?.originalAuthor?.photo } : require('../../img/blank_image.png')}
+                    size={30}
+                    rounded
+                    containerStyle={{
+                      marginRight: 12,
+                    }}
+                  />
+                </TouchableOpacity>
+                <View style={styles.post_person_name_holder}>
+                  <Text style={{ fontWeight: 'bold', fontSize: 11, fontFamily: 'Poppins_600SemiBold', }}>{item?.originalAuthor?.username}</Text>
+                </View>
+              </View>
+  
+              
+            </View>}
   
             <View style={styles.post_body_holder}>
               <Text>
@@ -283,7 +308,9 @@ export default function MainPage({ navigation, route }) {
                   </Text>
                 </TouchableOpacity>
   
-                <TouchableOpacity style={styles.post_actions_right_item}>
+                <TouchableOpacity 
+                  onPress={() => dispatch(rePost(item?._id))}
+                  style={styles.post_actions_right_item}>
                   <Icon 
                     type='evilicon'
                     name='retweet'
@@ -295,7 +322,9 @@ export default function MainPage({ navigation, route }) {
                   </Text>
                 </TouchableOpacity>
   
-                <TouchableOpacity style={styles.post_actions_right_item}>
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate('SinglePost', { item })}
+                  style={styles.post_actions_right_item}>
                   <Icon 
                     type='ionicon'
                     name='chatbubble-outline'
@@ -314,13 +343,14 @@ export default function MainPage({ navigation, route }) {
             
             <View style={{ display: 'flex', width: '100%', marginTop: 5 }}>
               <TextInput 
+                ref={inputRef}
                 placeholder='Message' 
                 style={styles.comment_box} 
                 placeholderTextColor={primary}
                 returnKeyType='send'
                 onSubmitEditing={(e) => {
                   const message = e.nativeEvent.text;
-                  postComment(item?._id, message);
+                  postComment(item, message, inputRef);
                 }}
                 />
             </View>
@@ -489,6 +519,7 @@ export default function MainPage({ navigation, route }) {
       <HomeStack.Screen name='MainHome' component={Home} />
       <HomeStack.Screen name='Profile' options={{ headerShown: false }} component={ProfilePage} />
       <HomeStack.Screen name='ProfileEdit' options={{ headerShown: false }} component={ProfileEditPage} />
+      <HomeStack.Screen name='SinglePost' options={{ headerShown: false }} component={SinglePostPage} />
       <HomeStack.Screen name='Talent' component={TalentPage}  />
       <HomeStack.Screen name='Work' component={WorkPage} />
       <HomeStack.Screen name='Location' component={LocationPage} />

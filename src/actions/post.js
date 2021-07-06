@@ -87,6 +87,23 @@ export const createPost = (body, navigation, configProgress, setIsProgress) => a
     }
 } 
 
+export const rePost = (id) => async (dispatch) => {
+    try {
+        dispatch({type: START_PROCESS});
+        const { data } = await api.rePost(id);
+        // console.log('Post Data: ',data.payload.createdPost);
+        dispatch({type: CREATE_POST, payload: data.payload.createdPost});
+        dispatch({type: END_PROCESS});
+        alert("Repost Successul");
+    } catch (error) {
+        if(error.response){
+            alert(error.response.data.payload);
+        }
+        console.log('Error',error.response.data.payload);
+        dispatch({type: END_PROCESS});
+    }
+}
+
 export const deletePost = (id, setBs) => async (dispatch) => {
     dispatch({type: START_PROCESS});
     try {
