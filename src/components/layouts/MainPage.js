@@ -5,20 +5,16 @@ import {
           TextInput,
           TouchableOpacity,
           View, 
-          Text, 
-          ScrollView, 
+          Text,
           ActivityIndicator,
           RefreshControl
          } from 'react-native';
 import { Avatar, Icon, Image, Tooltip, BottomSheet } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePost, getAllPost, likePost, loadMorePost, refreshAllPost, rePost } from '../../actions/post';
-import { logout } from '../../actions/user';
 import { black, grey, overlayColor, primary, secondary, white } from '../../color';
 import styles from '../../styles';
 import HeadNav from './Header';
-import CarouselPage from './parts/carousel';
-import PostsPage from './parts/Posts';
 import StoriesPage from './parts/Stories';
 import ProfileEditPage from './screens/Edit';
 import LocationPage from './screens/Location';
@@ -39,19 +35,13 @@ import SinglePostPage from './screens/SinglePost';
 
 export default function MainPage({ navigation, route }) {
 
-    
-    const getItemLayout = (data, index) => {
-      return { length: 400, offset: 400 * index, index };
-    };
-  
-    // console.log('User',user);
-    // console.log('Post',postInfo);
-
     const HomeStack = createStackNavigator();  
     const [selectTop, setSelectTop] = useState(0);
 
-
+    //Home Component
     function Home({ navigation, route }) {
+
+      //Dommy array for top slides
       const items = [
         {
           text : 'First Slide',
@@ -129,6 +119,7 @@ export default function MainPage({ navigation, route }) {
       const [loadingMore, setLoadingMore] = useState(false);
       const [isRefreshing, setIsRefreshing] = useState(false);
 
+      //Use effect to load post first time
       useEffect(() => {
         if(postLoad === false){
           setTimeout(() => {
@@ -138,6 +129,7 @@ export default function MainPage({ navigation, route }) {
         }
       }, []);
 
+      //Send comment on post
       const postComment =(item, text, ref) => {
         const body = {
           text: text,
@@ -146,6 +138,7 @@ export default function MainPage({ navigation, route }) {
         dispatch(createComment(item._id, body));
       };
 
+      // get Update All post list from Api
       const onRefresh = React.useCallback(() => {
         const skip = 0;
         const limit = 5;
@@ -161,7 +154,7 @@ export default function MainPage({ navigation, route }) {
             style={styles.post_holder}
             >
             
-            {/* Image Name Post time */}
+            {/* Image Name PostBy time */}
             <View style={styles.post_person_holder}>
               <View style={styles.post_person_details}>
                 <TouchableOpacity
@@ -199,7 +192,8 @@ export default function MainPage({ navigation, route }) {
               </TouchableOpacity>
               
             </View>
-
+            
+            {/* Post Original Author Holder if repost */}
             {!!item?.originalAuthor && <View style={styles.post_person_holder, { marginBottom: 5 }}>
               <View style={styles.post_person_details}>
                 <TouchableOpacity
@@ -221,7 +215,8 @@ export default function MainPage({ navigation, route }) {
   
               
             </View>}
-  
+            
+            {/* Post body Holder */}
             <View style={styles.post_body_holder}>
               <Text>
                 {item?.caption}
@@ -282,7 +277,8 @@ export default function MainPage({ navigation, route }) {
                 />
               }
             </View>
-  
+            
+            {/* Post Action key Holder */}
             <View style={styles.post_actions_holder}>
               <View style={styles.post_actions_left}>
                 <FontAwesomeIcon 
@@ -341,6 +337,7 @@ export default function MainPage({ navigation, route }) {
               </View>
             </View>
             
+            {/* Post Comment Box Holder */}
             <View style={{ display: 'flex', width: '100%', marginTop: 5 }}>
               <TextInput 
                 ref={inputRef}
@@ -362,6 +359,7 @@ export default function MainPage({ navigation, route }) {
 
       return (
         <View style={styles.container}>
+          {/* FlatList component */}
           <FlatList 
             style={{
               flex: 1,
@@ -421,6 +419,7 @@ export default function MainPage({ navigation, route }) {
             }}
           />
 
+          {/* Eact Post BottomSheet Component with set postBy ID */}
           <BottomSheet 
             isVisible={bsIsVisible}
             containerStyle={{
@@ -428,6 +427,7 @@ export default function MainPage({ navigation, route }) {
               minHeight: '100%',
             }}
           >
+            {/* Touch ovaley to dismissed ButtomSheet */}
             <TouchableOpacity
               onPress={()=> setBsIsVisible(!bsIsVisible)}
               style={{
@@ -445,6 +445,8 @@ export default function MainPage({ navigation, route }) {
             </TouchableOpacity>
 
             <View style={styles.post_bs_view_holder}>
+
+              {/* Touchable to delete selected post if postByID is logged in ID */}
                 {
                   user?.user?._id === selectPostByID && <TouchableOpacity 
                   onPress={() => dispatch(deletePost(selectPostID, setBsIsVisible))}
@@ -468,6 +470,7 @@ export default function MainPage({ navigation, route }) {
                 </TouchableOpacity>
                 }
 
+                {/* Touchable to open chat list if selected postByID not logged In ID open Single Chat */}
                 <TouchableOpacity 
                   onPress={() => navigation.navigate('Chat', {
                     screen: user?.user?._id === selectPostByID ? '' : 'SingleChat',
