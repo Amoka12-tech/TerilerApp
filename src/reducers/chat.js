@@ -1,18 +1,32 @@
 import { CREATE_CHAT, GET_ALL_CHATS, GET_CHAT } from "./types";
 
-export default function(chat = [], action){
+const initialChat = {
+    chat: null,
+    allChat: [],
+};
+
+export default function(state = initialChat, action){
     const {type, payload} = action;
     switch (type) {
         case CREATE_CHAT:
-            return payload;
+            return {
+                ...state,
+                chat: payload
+            };
 
         case GET_CHAT:
-            return payload;
+            return {
+                ...state,
+                chat: payload
+            };
 
         case GET_ALL_CHATS:
-            return payload;
+            return {
+                ...state,
+                allChat: payload
+            };
     
         default:
-            return chat;
+            return {...state};
     }
 };

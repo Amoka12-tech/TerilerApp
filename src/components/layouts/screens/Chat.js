@@ -1,52 +1,50 @@
 import React, { useEffect } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, FlatList } from 'react-native';
 import { View, Text } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 import { getChats } from '../../../actions/chat';
 import { black, secondary } from '../../../color';
 import styles from './styles';
 
-export default function ChatPage({ navigation, route }) {
+export default function ChatPage({ navigation }) {
   const dispatch = useDispatch();
-  const user = useSelector(state => state.auth.user);
-  const screen = route.params?.screen;
-  const id = route.params?.id;
+  const user = useSelector(state => state.auth.user?.user);
   
-  const chats = useSelector(state => state.chat);
+  const chats = useSelector(state => state.chat.allChat);
   useEffect(() => {
-    if( screen !== undefined || ''){
-      navigation.navigate(screen, { id: id });
-    }else{
       dispatch(getChats());
-    }
   }, []);
-  const ChatRender = () => {
+  const chatListRender = ({item, index}) => {
     return(
       <TouchableOpacity 
-        onPress={() => navigation.navigate('SingleChat')}
+        onPress={() => navigation.navigate('SingleChat', {
+            id: item?.participants[0]?._id === user?._id ? item?.participants[1]?._id : item?.participants[0]?._id,
+            user: item?.participants[0]?._id === user?._id ? item?.participants[1] : item?.participants[0]
+        })}
         style={styles.chatMessageHolder}>
         <Avatar 
-          source={require('../../../img/blank_image.png')}
+          source={item?.participants.length > 0 ? { uri: item?.participants[0]?._id === user?._id ? item?.participants[1]?.photo : item?.participants[0]?.photo } : require('../../../img/blank_image.png')}
           size={70}
           rounded
         />
         <View style={styles.chatBodyPreviewHolder}>
           <View style={styles.chatBodyPreviewTitle}>
             <Text style={styles.chatNameText}>
-              Michael Daniel 
+              {item?.participants[0]?._id === user?._id ? item?.participants[1]?.username : item?.participants[0]?.username}
             </Text>
             <Text style={styles.chatTimeText}>
-              30 mins
+              {moment(item?.updatedAt).fromNow()}
             </Text>
           </View>
           <View style={styles.chatBodyPreviewTextHolder}>
             <Text style={styles.chatMessageText}>
-            Can you pls how me mail a letter to your school?..... I tried reaching you...
+              {item?.messages[item?.messages?.length - 1]?.text}
             </Text>
             <View style={styles.messageNumberTextHolder}>
               <Text style={styles.messageNumberText}>
-                2
+                {item?.messages?.length}
               </Text>
             </View>
           </View>
@@ -67,7 +65,13 @@ export default function ChatPage({ navigation, route }) {
         />
       </View>
 
-      <ChatRender />
+      <FlatList 
+        style={{ flex: 1 }}
+        data={chats}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={chatListRender}
+        showsVerticalScrollIndicator={false}
+      />
      </View>
   );
 }

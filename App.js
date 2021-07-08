@@ -17,6 +17,7 @@ import { loadUser, logout } from './src/actions/user';
 import { TouchableOpacity } from 'react-native';
 import MainTabs from './src/components/navigation/Tabs';
 import ProfilePage from './src/components/layouts/screens/Profile';
+import Pusher from 'pusher-js/react-native';
 import { useFonts, Poppins_900Black, Poppins_900Black_Italic, Poppins_400Regular, Poppins_500Medium, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 
 const Stack = createStackNavigator();

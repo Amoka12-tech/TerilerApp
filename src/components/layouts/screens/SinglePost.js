@@ -25,7 +25,9 @@ export default function SinglePostPage({ navigation, route }) {
         const body = {
           text: text,
         };
-        ref.current.clear();
+        setTimeout(() => {
+            ref.current.clear();
+        }, 500);
         dispatch(createComment(id, body));
       };
 
@@ -78,6 +80,7 @@ export default function SinglePostPage({ navigation, route }) {
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', marginTop: 5 }}>
               <TextInput 
                 ref={inputRef}
+                multiline={true}
                 placeholder='Message' 
                 style={styles.comment_box}
                 placeholderTextColor={primary}

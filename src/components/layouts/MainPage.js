@@ -99,6 +99,7 @@ export default function MainPage({ navigation, route }) {
       const routeFocused = useIsFocused();
       const [selectPostID, setSelectPostID] = useState('');
       const [selectPostByID, setSelectPostByID] = useState('');
+      const [selectUser, setSelectUser] = useState(null);
       const [bsIsVisible, setBsIsVisible] = useState(false);
 
       const [activeIndex, setActiveIndex] = useState(0);
@@ -180,6 +181,7 @@ export default function MainPage({ navigation, route }) {
                 onPress={() => {
                   setSelectPostID(item?._id);
                   setSelectPostByID(item?.postBy?._id);
+                  setSelectUser(item?.postBy);
                   setBsIsVisible(!bsIsVisible);
                 }}
               >
@@ -472,10 +474,15 @@ export default function MainPage({ navigation, route }) {
 
                 {/* Touchable to open chat list if selected postByID not logged In ID open Single Chat */}
                 <TouchableOpacity 
-                  onPress={() => navigation.navigate('Chat', {
-                    screen: user?.user?._id === selectPostByID ? '' : 'SingleChat',
-                    id: selectPostByID,
-                  })}
+                  onPress={() => {
+                    navigation.navigate('Chat', {
+                      screen: user?.user?._id === selectPostByID ? 'ChatMain' : 'SingleChat',
+                      params: { 
+                                id: selectPostByID,
+                                user: selectUser,
+                              },
+                    });
+                  }}
                   style={styles.post_bs_view_touch}>
                   <Icon 
                     type='ionicon'

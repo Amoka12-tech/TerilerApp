@@ -56,7 +56,7 @@ const ChatStack = createStackNavigator();
 
 const ChatScreen = () => {
     return (
-        <ChatStack.Navigator mode="modal" screenOptions={{ 
+        <ChatStack.Navigator screenOptions={{ 
             headerShown: false
          }}>
             <ChatStack.Screen name='ChatMain' component={ChatPage} />
